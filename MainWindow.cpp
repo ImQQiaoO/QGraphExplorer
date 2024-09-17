@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     graphWidget->addEdge("B", "C");
     graphWidget->addEdge("D", "C");
 
+    // 设置窗口大小
+    resize(800, 600);  // 设置初始窗口大小为 800x600
+
 }
 
 MainWindow::~MainWindow() {
