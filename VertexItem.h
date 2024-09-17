@@ -21,6 +21,9 @@ protected:
     // 监听顶点的位置变化
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
+    // 捕获鼠标点击事件
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
 private:
     QString vertexName;
     QList<EdgeItem *> edges;  // 存储与该顶点相连的边

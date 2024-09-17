@@ -24,3 +24,9 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant &value
     }
     return QGraphicsEllipseItem::itemChange(change, value);
 }
+
+// 捕获鼠标点击事件并输出日志
+void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    qDebug() << "Vertex" << vertexName << "was clicked!";
+    QGraphicsEllipseItem::mousePressEvent(event);  // 调用父类方法继续处理默认行为
+}
