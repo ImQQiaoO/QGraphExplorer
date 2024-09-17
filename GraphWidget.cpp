@@ -1,0 +1,77 @@
+#include "GraphWidget.h"
+#include <QGraphicsEllipseItem>
+#include <QGraphicsLineItem>
+#include <QPen>
+#include <QBrush>
+#include <QPainter>
+#include <QWheelEvent>
+
+#include "VertexItem.h"
+#include "EdgeItem.h"
+
+constexpr double VERTEX_DIAMETER = 30.0;
+
+GraphWidget::GraphWidget(QWidget *parent)
+    : QGraphicsView(parent) {
+    // 初始化场景
+    scene = new QGraphicsScene(this);
+    setScene(scene);
+    setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
+
+    // 设置场景的边界
+    scene->setSceneRect(-200, -200, 400, 400);
+}
+
+void GraphWidget::addVertex(const QString &name, const QPointF &position) {
+    // 创建自定义顶点项
+    VertexItem *vertex = new VertexItem(name);
+    vertex->setRect(0, 0, 30, 30);  // 设置顶点的大小
+    vertex->setBrush(QBrush(Qt::yellow));
+    vertex->setPos(position);  // 设置顶点的位置
+    scene->addItem(vertex);
+
+    // 将顶点存储起来
+    vertices[name] = vertex;
+}
+
+void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {
+    // 获取两个顶点
+    VertexItem *v1 = vertices[vertex1];
+    VertexItem *v2 = vertices[vertex2];
+
+    // 创建自定义的边项，并将边加到场景中
+    EdgeItem *edge = new EdgeItem(v1, v2);
+
+    qreal radius = VERTEX_DIAMETER / 2;
+
+    scene->addItem(edge);
+
+    // 将边添加到两个顶点中，确保在顶点移动时更新边
+    v1->addEdge(edge);
+    v2->addEdge(edge);
+}
+
+QPointF GraphWidget::getVertexCenter(const QString &vertexName) {
+    // 获取顶点的中心点坐标
+    if (vertices.contains(vertexName)) {
+        QGraphicsEllipseItem *vertex = vertices[vertexName];
+        return vertex->sceneBoundingRect().center();  // 获取圆的中心
+    }
+    return QPointF();
+}
+
+void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect) {
+    // 可以在这里自定义背景绘制
+    QGraphicsView::drawBackground(painter, rect);
+}
+
+void GraphWidget::wheelEvent(QWheelEvent *event) {
+    // 检测鼠标滚轮的方向
+    if (event->angleDelta().y() > 0) {
+        // 放大
+        scale(scaleFactor, scaleFactor);
+    } else {
+        // 缩小
+        scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+    }
+}
