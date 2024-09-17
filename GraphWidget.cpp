@@ -9,8 +9,6 @@
 #include "VertexItem.h"
 #include "EdgeItem.h"
 
-constexpr double VERTEX_DIAMETER = 30.0;
-
 GraphWidget::GraphWidget(QWidget *parent)
     : QGraphicsView(parent) {
     // 初始化场景

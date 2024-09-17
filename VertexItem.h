@@ -8,6 +8,8 @@
 
 class EdgeItem;
 
+constexpr double VERTEX_DIAMETER = 30.0;
+
 class VertexItem : public QGraphicsEllipseItem {
 public:
     VertexItem(const QString &name, QGraphicsItem *parent = nullptr);

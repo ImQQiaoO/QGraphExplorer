@@ -1,12 +1,13 @@
 ﻿#include "VertexItem.h"
 #include "EdgeItem.h"
-#include <QGraphicsScene>
 
 VertexItem::VertexItem(const QString &name, QGraphicsItem *parent)
     : QGraphicsEllipseItem(parent), vertexName(name) {
-    // 设置为可拖动
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);  // 允许监听几何变化
+
+    // 设置顶点的大小
+    setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);
 }
 
 void VertexItem::addEdge(EdgeItem *edge) {
@@ -23,4 +24,3 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant &value
     }
     return QGraphicsEllipseItem::itemChange(change, value);
 }
-
