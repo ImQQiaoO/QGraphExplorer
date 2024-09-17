@@ -65,12 +65,18 @@ void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect) {
 }
 
 void GraphWidget::wheelEvent(QWheelEvent *event) {
-    // 检测鼠标滚轮的方向
-    if (event->angleDelta().y() > 0) {
-        // 放大
-        scale(scaleFactor, scaleFactor);
+    // 检查 Ctrl 键是否按下
+    if (event->modifiers() & Qt::ControlModifier) {
+        // 检查滚轮滚动的方向
+        if (event->angleDelta().y() > 0) {
+            // 放大
+            scale(1.15, 1.15);
+        } else {
+            // 缩小
+            scale(1.0 / 1.15, 1.0 / 1.15);
+        }
     } else {
-        // 缩小
-        scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        // 如果没有按住 Ctrl 键，则调用父类的事件处理程序
+        QGraphicsView::wheelEvent(event);
     }
 }
