@@ -23,8 +23,8 @@ GraphWidget::GraphWidget(QWidget *parent)
 void GraphWidget::addVertex(const QString &name, const QPointF &position) {
     // 创建自定义顶点项
     VertexItem *vertex = new VertexItem(name);
-    vertex->setRect(0, 0, 30, 30);  // 设置顶点的大小
-    vertex->setBrush(QBrush(Qt::yellow));
+    vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置顶点的大小
+    vertex->setBrush(QBrush(Qt::darkGray));
     vertex->setPos(position);  // 设置顶点的位置
     scene->addItem(vertex);
 

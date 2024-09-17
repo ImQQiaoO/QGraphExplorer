@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     graphWidget->addEdge("A", "C");
     graphWidget->addEdge("B", "C");
     graphWidget->addEdge("D", "C");
+
 }
 
 MainWindow::~MainWindow() {
