@@ -4,6 +4,7 @@
 VertexItem::VertexItem(const QString &name, QGraphicsItem *parent)
     : QGraphicsEllipseItem(parent), vertexName(name) {
     setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable);  // 允许顶点被选中
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);  // 允许监听几何变化
 
     // 设置顶点的大小

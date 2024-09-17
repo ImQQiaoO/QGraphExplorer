@@ -17,7 +17,10 @@ GraphWidget::GraphWidget(QWidget *parent)
     setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
 
     // 设置场景的边界
-    scene->setSceneRect(-200, -200, 400, 400);
+    scene->setSceneRect(-400, -400, 800, 800);
+
+    // 设置为橡皮筋拖拽模式，支持鼠标框选多个顶点
+    setDragMode(QGraphicsView::RubberBandDrag);
 }
 
 void GraphWidget::addVertex(const QString &name, const QPointF &position) {
@@ -39,8 +42,6 @@ void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {
 
     // 创建自定义的边项，并将边加到场景中
     EdgeItem *edge = new EdgeItem(v1, v2);
-
-    qreal radius = VERTEX_DIAMETER / 2;
 
     scene->addItem(edge);
 
