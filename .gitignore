@@ -13,6 +13,9 @@
 .vs
 .QtWidget.ACC95663
 x64
+cmake-bulid-debug
+cmake-bulid-release
+.idea
 
 # Qt-es
 object_script.*.Release
