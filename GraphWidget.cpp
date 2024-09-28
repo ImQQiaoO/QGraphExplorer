@@ -1,6 +1,5 @@
 #include "GraphWidget.h"
 #include <QGraphicsEllipseItem>
-#include <QGraphicsLineItem>
 #include <QPen>
 #include <QBrush>
 #include <QPainter>
@@ -28,7 +27,7 @@ void GraphWidget::addVertex(const QString &name, ShapeType shape, const QPointF 
 
     // 根据不同形状调整大小或其他设置
     switch (shape) {
-    case ShapeType::Circle:
+        case ShapeType::Circle:
             vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置圆形大小
             break;
         case ShapeType::Rectangle:

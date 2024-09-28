@@ -1,9 +1,7 @@
 #ifndef VERTEXITEM_H
 #define VERTEXITEM_H
 
-#include <QGraphicsEllipseItem>
 #include <QGraphicsLineItem>
-#include <QMap>
 #include <QGraphicsScene>
 
 constexpr double VERTEX_DIAMETER = 30.0;

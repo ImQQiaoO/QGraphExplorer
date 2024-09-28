@@ -1,6 +1,5 @@
 #include "EdgeItem.h"
 #include "VertexItem.h"
-#include <QtMath>
 
 EdgeItem::EdgeItem(VertexItem *sourceVertex, VertexItem *destVertex, QGraphicsItem *parent)
     : QGraphicsLineItem(parent), source(sourceVertex), dest(destVertex) {
