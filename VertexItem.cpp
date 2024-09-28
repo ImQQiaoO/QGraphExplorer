@@ -14,11 +14,6 @@ VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
     setRect(QRectF(0, 0, 50, 50));  // 使用自定义的setRect方法
 }
 
-// 设置顶点的边界矩形
-void VertexItem::setVertexRect(const QRectF &newRect) {
-    rect = newRect;
-    update();  // 通知Qt更新绘制
-}
 
 // 返回不同形状的QPainterPath，用于点击检测
 QPainterPath VertexItem::shape() const {
@@ -33,7 +28,9 @@ QPainterPath VertexItem::shape() const {
             break;
         case ShapeType::Triangle:
             QPolygonF triangle;
-            triangle << QPointF(25, 0) << QPointF(50, 50) << QPointF(0, 50);
+            triangle << QPointF(rect.center().x(), rect.top())
+                << QPointF(rect.bottomRight())
+                << QPointF(rect.bottomLeft());
             path.addPolygon(triangle);
             break;
     }
@@ -68,7 +65,9 @@ void VertexItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             break;
         case ShapeType::Triangle:
             QPolygonF triangle;
-            triangle << QPointF(25, 0) << QPointF(50, 50) << QPointF(0, 50);
+            triangle << QPointF(rect.center().x(), rect.top())
+                << QPointF(rect.bottomRight())
+                << QPointF(rect.bottomLeft());
             painter->drawPolygon(triangle);
             break;
     }

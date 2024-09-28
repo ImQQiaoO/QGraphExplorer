@@ -18,9 +18,6 @@ class VertexItem : public QGraphicsItem {
 public:
     VertexItem(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
 
-    // 设置形状的边界矩形
-    void setVertexRect(const QRectF &rect);
-
     // 设置填充颜色
     void setBrush(const QBrush &brush);
 

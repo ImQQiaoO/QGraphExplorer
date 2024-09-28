@@ -23,5 +23,4 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-MainWindow::~MainWindow() {
-}
+MainWindow::~MainWindow() = default;
