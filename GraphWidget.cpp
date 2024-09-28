@@ -5,7 +5,6 @@
 #include <QBrush>
 #include <QPainter>
 #include <QWheelEvent>
-
 #include "VertexItem.h"
 #include "EdgeItem.h"
 
@@ -23,12 +22,28 @@ GraphWidget::GraphWidget(QWidget *parent)
     setDragMode(QGraphicsView::RubberBandDrag);
 }
 
-void GraphWidget::addVertex(const QString &name, const QPointF &position) {
-    // 创建自定义顶点项
-    VertexItem *vertex = new VertexItem(name);
-    vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置顶点的大小
+void GraphWidget::addVertex(const QString &name, ShapeType shape, const QPointF &position) {
+    // 创建自定义顶点项，传入指定的形状
+    VertexItem *vertex = new VertexItem(name, shape);
+
+    // 根据不同形状调整大小或其他设置
+    switch (shape) {
+    case ShapeType::Circle:
+            vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置圆形大小
+            break;
+        case ShapeType::Rectangle:
+            vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置矩形大小
+            break;
+        case ShapeType::Triangle:
+            // 对于三角形，不使用 `setRect`，直接通过 `paint` 渲染
+            break;
+    }
+
+    // 设置顶点的颜色或其他样式
     vertex->setBrush(QBrush(Qt::darkGray));
-    vertex->setPos(position);  // 设置顶点的位置
+
+    // 设置顶点的位置
+    vertex->setPos(position);
     scene->addItem(vertex);
 
     // 将顶点存储起来
@@ -53,7 +68,7 @@ void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {
 QPointF GraphWidget::getVertexCenter(const QString &vertexName) {
     // 获取顶点的中心点坐标
     if (vertices.contains(vertexName)) {
-        QGraphicsEllipseItem *vertex = vertices[vertexName];
+        QGraphicsItem *vertex = vertices[vertexName];
         return vertex->sceneBoundingRect().center();  // 获取圆的中心
     }
     return QPointF();

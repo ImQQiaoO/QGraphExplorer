@@ -1,14 +1,86 @@
 ﻿#include "VertexItem.h"
 #include "EdgeItem.h"
+#include <QPainter>
+#include <QGraphicsSceneMouseEvent>
 
-VertexItem::VertexItem(const QString &name, QGraphicsItem *parent)
-    : QGraphicsEllipseItem(parent), vertexName(name) {
+
+VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
+    : QGraphicsItem(parent), vertexName(std::move(name)), shapeType(shape) {
     setFlag(QGraphicsItem::ItemIsMovable);
-    setFlag(QGraphicsItem::ItemIsSelectable);  // 允许顶点被选中
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges);  // 允许监听几何变化
+    setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 
-    // 设置顶点的大小
-    setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);
+    // 手动设置顶点的初始大小为一个50x50的矩形
+    setRect(QRectF(0, 0, 50, 50));  // 使用自定义的setRect方法
+}
+
+// 设置顶点的边界矩形
+void VertexItem::setVertexRect(const QRectF &newRect) {
+    rect = newRect;
+    update();  // 通知Qt更新绘制
+}
+
+// 返回不同形状的QPainterPath，用于点击检测
+QPainterPath VertexItem::shape() const {
+    QPainterPath path;
+
+    switch (shapeType) {
+        case ShapeType::Circle:
+            path.addEllipse(boundingRect());
+            break;
+        case ShapeType::Rectangle:
+            path.addRect(boundingRect());
+            break;
+        case ShapeType::Triangle:
+            QPolygonF triangle;
+            triangle << QPointF(25, 0) << QPointF(50, 50) << QPointF(0, 50);
+            path.addPolygon(triangle);
+            break;
+    }
+
+    return path;
+}
+
+
+// 设置顶点的填充颜色
+void VertexItem::setBrush(const QBrush &newBrush) {
+    brush = newBrush;
+    update();
+}
+
+//QRectF VertexItem::boundingRect() const {
+//    return QRectF(0, 0, 50, 50);  // 设置一个合适的边界框
+//}
+QRectF VertexItem::boundingRect() const {
+    return rect;  // 返回当前设置的边界矩形
+}
+
+void VertexItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+    painter->setPen(QPen(Qt::black, 2));
+    painter->setBrush(Qt::darkGray);
+
+    switch (shapeType) {
+        case ShapeType::Circle:
+            painter->drawEllipse(boundingRect());
+            break;
+        case ShapeType::Rectangle:
+            painter->drawRect(boundingRect());
+            break;
+        case ShapeType::Triangle:
+            QPolygonF triangle;
+            triangle << QPointF(25, 0) << QPointF(50, 50) << QPointF(0, 50);
+            painter->drawPolygon(triangle);
+            break;
+    }
+}
+
+void VertexItem::setRect(const QRectF &newRect) {
+    rect = newRect;
+    update();  // 通知Qt重新绘制
+}
+
+void VertexItem::setRect(qreal x, qreal y, qreal width, qreal height) {
+    setRect(QRectF(x, y, width, height));  // 调用QRectF版本的setRect
 }
 
 void VertexItem::addEdge(EdgeItem *edge) {
@@ -23,11 +95,12 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant &value
             edge->updatePosition();
         }
     }
-    return QGraphicsEllipseItem::itemChange(change, value);
+    return QGraphicsItem::itemChange(change, value);
 }
 
 // 捕获鼠标点击事件并输出日志
 void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "Vertex" << vertexName << "was clicked!";
-    QGraphicsEllipseItem::mousePressEvent(event);  // 调用父类方法继续处理默认行为
+    QGraphicsItem::mousePressEvent(event);  // 调用父类方法继续处理默认行为
 }
+

@@ -14,7 +14,7 @@ public:
     GraphWidget(QWidget *parent = nullptr);
 
     // 添加一个顶点到图中
-    void addVertex(const QString &name, const QPointF &position);
+    void addVertex(const QString &name, ShapeType shape, const QPointF &position);
 
     // 添加一条边到图中
     void addEdge(const QString &vertex1, const QString &vertex2);
