@@ -3,7 +3,7 @@
 
 EdgeItem::EdgeItem(VertexItem *sourceVertex, VertexItem *destVertex, QGraphicsItem *parent)
     : QGraphicsLineItem(parent), source(sourceVertex), dest(destVertex) {
-    setPen(QPen(Qt::black, 2));
+    setPen(QPen(Qt::red, 2));
     updatePosition();
 }
 
