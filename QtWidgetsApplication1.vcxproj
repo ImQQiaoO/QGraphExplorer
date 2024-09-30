@@ -92,21 +92,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EdgeItem.cpp" />
-    <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="VertexItem.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="QtWidgetsApplication1.ui" />
-    <QtMoc Include="GraphWidget.h" />
-    <ClCompile Include="GraphWidget.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MainWindow.h" />
+    <ClInclude Include="src\EdgeItem.h" />
+    <ClInclude Include="src\VertexItem.h" />
+    <QtMoc Include="src\MainWindow.h" />
+    <QtMoc Include="src\GraphWidget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EdgeItem.h" />
-    <ClInclude Include="VertexItem.h" />
+    <ClCompile Include="src\EdgeItem.cpp" />
+    <ClCompile Include="src\GraphWidget.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="src\VertexItem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -34,8 +34,7 @@ void GraphWidget::addVertex(const QString &name, ShapeType shape, const QPointF 
             vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置矩形大小
             break;
         case ShapeType::Triangle:
-            // 对于三角形，不使用 `setRect`，直接通过 `paint` 渲染
-            vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);  // 设置矩形大小
+            vertex->setRect(0, 0, VERTEX_DIAMETER, VERTEX_DIAMETER);
             break;
     }
 

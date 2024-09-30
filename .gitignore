@@ -16,6 +16,10 @@ x64
 cmake-bulid-debug
 cmake-bulid-release
 .idea
+out
+*.user
+CMakePresets.json
+CMakeUserPresets.json
 
 # Qt-es
 object_script.*.Release
