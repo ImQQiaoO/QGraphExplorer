@@ -16,11 +16,11 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 add_executable(QGraphExplorer
-        main.cpp
-        MainWindow.cpp
-        GraphWidget.cpp
-        EdgeItem.cpp
-        VertexItem.cpp)
+        src/main.cpp
+        src/MainWindow.cpp
+        src/GraphWidget.cpp
+        src/EdgeItem.cpp
+        src/VertexItem.cpp)
 
 target_link_libraries(QGraphExplorer
         Qt::Core
