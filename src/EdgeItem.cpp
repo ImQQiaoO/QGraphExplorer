@@ -3,30 +3,63 @@
 
 EdgeItem::EdgeItem(VertexItem *sourceVertex, VertexItem *destVertex, QGraphicsItem *parent)
     : QGraphicsLineItem(parent), source(sourceVertex), dest(destVertex) {
-    setPen(QPen(Qt::red, 2));
+    setPen(QPen(Qt::black, 2));
     updatePosition();
 }
 
-void EdgeItem::updatePosition() {
-    // 获取顶点的中心位置，假设顶点的半径是15
-    QPointF sourcePos = source->pos() + QPointF(VERTEX_DIAMETER / 2, VERTEX_DIAMETER / 2);  
-    QPointF destPos = dest->pos() + QPointF(VERTEX_DIAMETER / 2, VERTEX_DIAMETER / 2);
+QPointF EdgeItem::getIntersectionPoint(const QPainterPath &shape, const QLineF &line, bool isSource) {
+    QPolygonF polygon = shape.toFillPolygon();
+    QLineF adjustedLine = isSource ? line : QLineF(line.p2(), line.p1());
+    QPointF intersectPoint;
+    bool foundIntersection = false;
 
-    // 计算向量
-    QLineF line(sourcePos, destPos);
-
-    // 计算从中心到边缘的偏移量
-    qreal radius = VERTEX_DIAMETER / 2;  // 顶点的半径
-    if (line.length() > 2 * radius) {
-        // 计算单位向量
-        QPointF offsetSource = radius * QPointF(line.dx(), line.dy()) / line.length();
-        QPointF offsetDest = radius * QPointF(-line.dx(), -line.dy()) / line.length();
-
-        // 调整线条的起点和终点，使它们位于边缘
-        line.setP1(line.p1() + offsetSource);
-        line.setP2(line.p2() + offsetDest);
+    for (int i = 0; i < polygon.size(); ++i) {
+        QLineF edge(polygon.at(i), polygon.at((i + 1) % polygon.size()));
+        QPointF intersection;
+        if (adjustedLine.intersects(edge, &intersection) == QLineF::BoundedIntersection) {
+            intersectPoint = intersection;
+            foundIntersection = true;
+            break;
+        }
     }
 
-    // 设置更新后的线
-    setLine(line);
+    // 如果找不到交点，返回原点作为后备（以防止绘制错误）
+    if (!foundIntersection) {
+        intersectPoint = isSource ? line.p1() : line.p2();
+    }
+
+    return intersectPoint;
+}
+
+void EdgeItem::updatePosition() {
+    if (!source || !dest) return;
+
+    // 获取源和目标的中心位置
+    QPointF sourceCenter = source->mapToScene(source->boundingRect().center());
+    QPointF destCenter = dest->mapToScene(dest->boundingRect().center());
+
+    // 创建线条，从源节点中心到目标节点中心
+    QLineF line(sourceCenter, destCenter);
+
+    // 获取源和目标节点的形状
+    QPainterPath sourceShape = source->shape();
+    QPainterPath destShape = dest->shape();
+
+    // 将形状从局部坐标转换为场景坐标，并转换为QPainterPath
+    QPolygonF sourcePolygonInScene = source->mapToScene(sourceShape.toFillPolygon());
+    QPolygonF destPolygonInScene = dest->mapToScene(destShape.toFillPolygon());
+
+    // 将 QPolygonF 转换回 QPainterPath
+    QPainterPath sourceShapeInScene;
+    sourceShapeInScene.addPolygon(sourcePolygonInScene);
+
+    QPainterPath destShapeInScene;
+    destShapeInScene.addPolygon(destPolygonInScene);
+
+    // 计算交点
+    QPointF sourceIntersection = getIntersectionPoint(sourceShapeInScene, line, true);
+    QPointF destIntersection = getIntersectionPoint(destShapeInScene, line, false);
+
+    // 更新线条的起点和终点为交点
+    setLine(QLineF(sourceIntersection, destIntersection));
 }
