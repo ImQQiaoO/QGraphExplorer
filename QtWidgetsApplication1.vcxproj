@@ -96,12 +96,14 @@
     <QtUic Include="QtWidgetsApplication1.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AddItems.h" />
     <ClInclude Include="src\EdgeItem.h" />
     <ClInclude Include="src\VertexItem.h" />
     <QtMoc Include="src\MainWindow.h" />
     <QtMoc Include="src\GraphWidget.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AddItems.cpp" />
     <ClCompile Include="src\EdgeItem.cpp" />
     <ClCompile Include="src\GraphWidget.cpp" />
     <ClCompile Include="src\main.cpp" />

@@ -37,6 +37,9 @@
     <ClInclude Include="src\VertexItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\AddItems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\GraphWidget.h">
@@ -60,6 +63,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AddItems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
