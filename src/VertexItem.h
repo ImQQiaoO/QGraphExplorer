@@ -17,7 +17,7 @@ class EdgeItem;
 class VertexItem : public QGraphicsItem {
 public:
     VertexItem(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
-
+    virtual ~VertexItem() {}
     // 设置填充颜色
     void setBrush(const QBrush &brush);
 
@@ -37,7 +37,7 @@ protected:
     // 捕获鼠标点击事件
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
-private:
+//private:
     QString vertexName;
     ShapeType shapeType;
     QRectF rect;       // 顶点的边界矩形
