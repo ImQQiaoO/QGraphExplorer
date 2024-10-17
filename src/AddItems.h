@@ -40,7 +40,7 @@ class AddItems {
         graphWidget->addEdge("D", "C");
     }
 
-    
+
 
 public:
     AddItems() = default;
