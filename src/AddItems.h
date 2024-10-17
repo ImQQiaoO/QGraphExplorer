@@ -1,9 +1,7 @@
 ﻿#ifndef ADDITEMS_H
 #define ADDITEMS_H
 #include <iostream> // TODO: For Debug
-
 #include "VertexItem.h"
-#include "VertexWithInfo.h"
 #include "MainWindow.h"
 #include <random>
 

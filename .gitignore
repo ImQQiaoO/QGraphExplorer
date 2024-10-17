@@ -11,7 +11,7 @@
 *.dylib
 
 .vs
-.QtWidget.ACC95663
+QtWidget.*
 x64
 cmake-bulid-debug
 cmake-bulid-release

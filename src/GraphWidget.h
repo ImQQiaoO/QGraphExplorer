@@ -2,7 +2,6 @@
 #define GRAPHWIDGET_H
 
 #include <QGraphicsView>
-#include <QGraphicsScene>
 #include <QMap>
 #include <vector>
 

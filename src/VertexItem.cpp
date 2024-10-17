@@ -1,7 +1,6 @@
 ﻿#include "VertexItem.h"
 #include "EdgeItem.h"
 #include <QPainter>
-#include <QGraphicsSceneMouseEvent>
 
 
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)

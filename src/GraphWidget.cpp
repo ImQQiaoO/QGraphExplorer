@@ -1,13 +1,6 @@
 #include "GraphWidget.h"
-
-#include <iostream>
-#include <QGraphicsEllipseItem>
-#include <QPen>
-#include <QBrush>
-#include <QPainter>
 #include <QWheelEvent>
 #include <QTimer>
-#include "VertexItem.h"
 #include "EdgeItem.h"
 #include "VertexWithInfo.h"
 
