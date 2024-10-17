@@ -20,7 +20,10 @@ add_executable(QGraphExplorer
         src/MainWindow.cpp
         src/GraphWidget.cpp
         src/EdgeItem.cpp
-        src/VertexItem.cpp)
+        src/VertexItem.cpp
+        src/AddItems.cpp
+        src/VertexWithInfo.cpp
+)
 
 target_link_libraries(QGraphExplorer
         Qt::Core
