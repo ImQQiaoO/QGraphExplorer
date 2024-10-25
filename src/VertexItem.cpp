@@ -2,12 +2,16 @@
 #include "EdgeItem.h"
 #include <QPainter>
 
+#include "NodeInfoPopup.h"
+
 
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
     : QGraphicsItem(parent), vertexName(std::move(name)), shapeType(shape) {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
-    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);  // Enable hover events
+    setAcceptHoverEvents(true);  // 启用悬停事件
+    popup = nullptr;  // 初始化悬浮窗指针为空
 
     // 手动设置顶点的初始大小为一个50x50的矩形
     setRect(QRectF(0, 0, 50, 50));  // 使用自定义的setRect方法
@@ -99,6 +103,32 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant &value
 // 捕获鼠标点击事件并输出日志
 void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "Vertex" << vertexName << "was clicked!";
+    hidePopup();
     QGraphicsItem::mousePressEvent(event);  // 调用父类方法继续处理默认行为
 }
 
+// Override the hoverEnterEvent to show the tooltip
+void VertexItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    if (!popup) {
+        popup = new NodeInfoPopup("节点名称：" + this->vertexName, nullptr);
+        popup->move(event->screenPos());  // 设置悬浮窗的位置
+        popup->show();  // 显示悬浮窗
+    }
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+// 重写 hoverLeaveEvent，隐藏悬浮窗
+void VertexItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    hidePopup();
+    QGraphicsItem::hoverLeaveEvent(event);
+}
+
+
+// 定义隐藏悬浮窗的函数
+void VertexItem::hidePopup() {
+    if (popup) {
+        popup->close();  // 关闭悬浮窗
+        delete popup;  // 删除悬浮窗对象
+        popup = nullptr;  // 将指针重置为空
+    }
+}

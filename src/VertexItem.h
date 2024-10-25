@@ -3,6 +3,10 @@
 
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
+#include <QToolTip>
+#include <QGraphicsSceneHoverEvent>
+
+#include "NodeInfoPopup.h"
 
 constexpr double VERTEX_DIAMETER = 30.0;
 
@@ -17,7 +21,7 @@ class EdgeItem;
 class VertexItem : public QGraphicsItem {
 public:
     VertexItem(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
-    virtual ~VertexItem() {}
+    ~VertexItem() override {}
     // 设置填充颜色
     void setBrush(const QBrush &brush);
 
@@ -36,13 +40,18 @@ protected:
 
     // 捕获鼠标点击事件
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-//private:
+    //private:
     QString vertexName;
     ShapeType shapeType;
     QRectF rect;       // 顶点的边界矩形
     QBrush brush;      // 顶点的填充颜色
     QList<EdgeItem *> edges;  // 存储与该顶点相连的边
+private:
+    void hidePopup();
+    NodeInfoPopup *popup;
 };
 
 #endif // VERTEXITEM_H
