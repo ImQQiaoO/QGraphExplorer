@@ -23,6 +23,7 @@ add_executable(QGraphExplorer
         src/VertexItem.cpp
         src/AddItems.cpp
         src/VertexWithInfo.cpp
+        src/NodeInfoPopup.cpp
 )
 
 target_link_libraries(QGraphExplorer
