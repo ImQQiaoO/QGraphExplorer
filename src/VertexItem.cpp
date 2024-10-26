@@ -1,7 +1,7 @@
 ﻿#include "VertexItem.h"
 #include "EdgeItem.h"
 #include <QPainter>
-
+#include <QGraphicsSceneHoverEvent>
 #include "NodeInfoPopup.h"
 
 
@@ -55,7 +55,8 @@ QRectF VertexItem::boundingRect() const {
     return rect;  // 返回当前设置的边界矩形
 }
 
-void VertexItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void VertexItem::paint(QPainter *painter, [[maybe_unused]] const QStyleOptionGraphicsItem *option,
+    [[maybe_unused]] QWidget *widget) {
     painter->setPen(QPen(Qt::black, 2));
     painter->setBrush(Qt::darkGray);
 

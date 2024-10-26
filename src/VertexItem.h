@@ -3,8 +3,6 @@
 
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
-#include <QToolTip>
-#include <QGraphicsSceneHoverEvent>
 
 #include "NodeInfoPopup.h"
 
@@ -21,7 +19,7 @@ class EdgeItem;
 class VertexItem : public QGraphicsItem {
 public:
     VertexItem(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
-    ~VertexItem() override {}
+    ~VertexItem() override = default;
     // 设置填充颜色
     void setBrush(const QBrush &brush);
 

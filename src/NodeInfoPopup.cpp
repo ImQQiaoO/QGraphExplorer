@@ -1,4 +1,4 @@
-﻿#include"NodeInfoPopup.h"
+﻿#include "NodeInfoPopup.h"
 #include <QVBoxLayout>
 
 NodeInfoPopup::NodeInfoPopup(const QString &info, QWidget *parent) : QWidget(parent) {
