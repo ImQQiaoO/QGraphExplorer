@@ -1,5 +1,5 @@
-﻿#ifndef NODEINFOPOPUP
-#define NODEINFOPOPUP
+﻿#ifndef NODEINFOPOPUP_H
+#define NODEINFOPOPUP_H
 
 #include <QLabel>
 
@@ -8,4 +8,4 @@ public:
     explicit NodeInfoPopup(const QString &info, QWidget *parent = nullptr);
 };
 
-#endif // NODEINFOPOPUP
+#endif // NODEINFOPOPUP_H
