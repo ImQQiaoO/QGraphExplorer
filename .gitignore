@@ -21,6 +21,10 @@ out
 CMakePresets.json
 CMakeUserPresets.json
 
+# ºöÂÔpythonĞéÄâ»·¾³
+.venv
+venv
+
 # Qt-es
 object_script.*.Release
 object_script.*.Debug
