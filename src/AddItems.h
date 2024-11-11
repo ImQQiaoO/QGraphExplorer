@@ -42,7 +42,7 @@ class AddItems {
 public:
     AddItems() = default;
 
-    AddItems(GraphWidget *graphWidget) {
+    explicit AddItems(GraphWidget *graphWidget) {
         std::cout << "AddItems(GraphWidget *graphWidget) Called" << '\n';
         addDebug(graphWidget);
     }

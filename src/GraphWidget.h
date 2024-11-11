@@ -12,7 +12,7 @@ class GraphWidget : public QGraphicsView {
     Q_OBJECT
 
 public:
-    GraphWidget(QWidget *parent = nullptr);
+    explicit GraphWidget(QWidget *parent = nullptr);
 
     // 添加一个顶点到图中
     void addVertex(const QString &name, ShapeType shape, const QPointF &position);

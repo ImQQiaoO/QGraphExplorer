@@ -19,7 +19,7 @@ class EdgeItem;
 class VertexItem : public QGraphicsItem {
 public:
     VertexItem(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
-    virtual ~VertexItem() override;
+    ~VertexItem() override;
     // 设置填充颜色
     void setBrush(const QBrush &brush);
 
