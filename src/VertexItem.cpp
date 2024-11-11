@@ -17,6 +17,10 @@ VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
     setRect(QRectF(0, 0, 50, 50));  // 使用自定义的setRect方法
 }
 
+VertexItem::~VertexItem() {
+    hidePopup();
+}
+
 
 // 返回不同形状的QPainterPath，用于点击检测
 QPainterPath VertexItem::shape() const {

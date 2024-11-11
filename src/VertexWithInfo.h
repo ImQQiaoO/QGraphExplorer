@@ -3,7 +3,7 @@
 #include "VertexItem.h"
 
 class VertexWithInfo : public VertexItem {
-    QPointF force_ ;
+    QPointF force_;
 public:
     VertexWithInfo(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
     void setForce(QPointF);
