@@ -2,6 +2,7 @@
 #include "EdgeItem.h"
 #include <QPainter>
 #include <QGraphicsSceneHoverEvent>
+#include <spdlog/spdlog.h>
 #include "VertexInfoPopup.h"
 
 
@@ -18,6 +19,7 @@ VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
 }
 
 VertexItem::~VertexItem() {
+    spdlog::debug("Destruct Vertex {}.", vertexName.toStdString());
     hidePopup();
 }
 
@@ -107,7 +109,7 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant &value
 
 // 捕获鼠标点击事件并输出日志
 void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    qDebug() << "Vertex" << vertexName << "was clicked!";
+    spdlog::debug("Vertex {} was clicked.", vertexName.toStdString());
     hidePopup();
     QGraphicsItem::mousePressEvent(event);  // 调用父类方法继续处理默认行为
 }
@@ -115,6 +117,7 @@ void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 // Override the hoverEnterEvent to show the tooltip
 void VertexItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (!popup) {
+        spdlog::debug("Vertex {} popup.", vertexName.toStdString());
         popup = new VertexInfoPopup("节点名称：" + this->vertexName, nullptr);
         popup->move(event->screenPos());  // 设置悬浮窗的位置
         popup->show();  // 显示悬浮窗
@@ -132,6 +135,7 @@ void VertexItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 // 定义隐藏悬浮窗的函数
 void VertexItem::hidePopup() {
     if (popup) {
+        spdlog::debug("Vertex {} popup deleted.", vertexName.toStdString());
         popup->close();  // 关闭悬浮窗
         delete popup;  // 删除悬浮窗对象
         popup = nullptr;  // 将指针重置为空

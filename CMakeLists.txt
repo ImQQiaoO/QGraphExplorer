@@ -15,6 +15,17 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
+# 引入 FetchContent 模块
+include(FetchContent)
+
+# 引入 spdlog 库
+FetchContent_Declare(
+        spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.11.0 # 指定版本，可以根据需要更改
+)
+FetchContent_MakeAvailable(spdlog)
+
 add_executable(QGraphExplorer
         src/main.cpp
         src/MainWindow.cpp
@@ -23,13 +34,14 @@ add_executable(QGraphExplorer
         src/VertexItem.cpp
         src/AddItems.cpp
         src/VertexWithInfo.cpp
-        src/NodeInfoPopup.cpp
+        src/VertexInfoPopup.cpp
 )
 
 target_link_libraries(QGraphExplorer
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        spdlog::spdlog
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)

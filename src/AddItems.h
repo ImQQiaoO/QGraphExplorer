@@ -4,6 +4,7 @@
 #include "VertexItem.h"
 #include "MainWindow.h"
 #include <random>
+#include <spdlog/spdlog.h>
 
 class AddItems {
     static void addDebug(GraphWidget *graphWidget) {
@@ -43,7 +44,7 @@ public:
     AddItems() = default;
 
     explicit AddItems(GraphWidget *graphWidget) {
-        std::cout << "AddItems(GraphWidget *graphWidget) Called" << '\n';
+        spdlog::info("AddItems(GraphWidget * graphWidget) Called.");
         addDebug(graphWidget);
     }
 
