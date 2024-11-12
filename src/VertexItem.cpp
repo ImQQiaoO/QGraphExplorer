@@ -2,7 +2,7 @@
 #include "EdgeItem.h"
 #include <QPainter>
 #include <QGraphicsSceneHoverEvent>
-#include "NodeInfoPopup.h"
+#include "VertexInfoPopup.h"
 
 
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
@@ -115,7 +115,7 @@ void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 // Override the hoverEnterEvent to show the tooltip
 void VertexItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (!popup) {
-        popup = new NodeInfoPopup("节点名称：" + this->vertexName, nullptr);
+        popup = new VertexInfoPopup("节点名称：" + this->vertexName, nullptr);
         popup->move(event->screenPos());  // 设置悬浮窗的位置
         popup->show();  // 显示悬浮窗
     }

@@ -98,7 +98,7 @@
   <ItemGroup>
     <ClInclude Include="src\AddItems.h" />
     <ClInclude Include="src\EdgeItem.h" />
-    <ClInclude Include="src\NodeInfoPopup.h" />
+    <ClInclude Include="src\VertexInfoPopup.h" />
     <ClInclude Include="src\VertexItem.h" />
     <ClInclude Include="src\VertexWithInfo.h" />
     <QtMoc Include="src\MainWindow.h" />
@@ -110,7 +110,7 @@
     <ClCompile Include="src\GraphWidget.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
-    <ClCompile Include="src\NodeInfoPopup.cpp" />
+    <ClCompile Include="src\VertexInfoPopup.cpp" />
     <ClCompile Include="src\VertexItem.cpp" />
     <ClCompile Include="src\VertexWithInfo.cpp" />
   </ItemGroup>

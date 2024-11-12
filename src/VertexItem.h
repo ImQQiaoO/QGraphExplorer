@@ -4,7 +4,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
 
-#include "NodeInfoPopup.h"
+#include "VertexInfoPopup.h"
 
 constexpr double VERTEX_DIAMETER = 30.0;
 
@@ -49,7 +49,7 @@ protected:
     QList<EdgeItem *> edges;  // 存储与该顶点相连的边
 private:
     void hidePopup();
-    NodeInfoPopup *popup;
+    VertexInfoPopup *popup;
 };
 
 #endif // VERTEXITEM_H
