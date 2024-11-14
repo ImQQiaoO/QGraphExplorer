@@ -1,6 +1,5 @@
 ﻿#ifndef ADDITEMS_H
 #define ADDITEMS_H
-#include <iostream> // TODO: For Debug
 #include "VertexItem.h"
 #include "MainWindow.h"
 #include <random>
@@ -17,7 +16,7 @@ class AddItems {
         // 定义一个均匀分布，范围从 -200.0 到 200.0
         std::uniform_real_distribution<double> distrib(-200.0, 200.0);
 
-        graphWidget->addVertex("A", ShapeType::Circle,
+        graphWidget->addVertex("你好", ShapeType::Circle,
             QPointF(distrib(gen), distrib(gen)));
         graphWidget->addVertex("B", ShapeType::Triangle,
             QPointF(distrib(gen), distrib(gen)));
@@ -32,8 +31,8 @@ class AddItems {
         //graphWidget->addVertex("D", ShapeType::Rectangle, QPointF(150, 100));
 
         // 添加一些边
-        graphWidget->addEdge("A", "B");
-        graphWidget->addEdge("A", "C");
+        graphWidget->addEdge("你好", "B");
+        graphWidget->addEdge("你好", "C");
         graphWidget->addEdge("B", "C");
         graphWidget->addEdge("D", "C");
     }

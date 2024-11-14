@@ -4,6 +4,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <spdlog/spdlog.h>
 #include "VertexInfoPopup.h"
+#include "utils/Locale.hpp"
 
 
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
@@ -19,7 +20,9 @@ VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
 }
 
 VertexItem::~VertexItem() {
-    spdlog::debug("Destruct Vertex {}.", vertexName.toStdString());
+    std::string utf8Str = fmt::format("Destruct Vertex {}.", vertexName.toStdString());
+    std::string gbkStr = utils::utf8_to_ansi(utf8Str);
+    spdlog::debug(gbkStr);
     hidePopup();
 }
 
@@ -109,7 +112,9 @@ QVariant VertexItem::itemChange(GraphicsItemChange change, const QVariant &value
 
 // 捕获鼠标点击事件并输出日志
 void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    spdlog::debug("Vertex {} was clicked.", vertexName.toStdString());
+    std::string utf8Str = fmt::format("Vertex {} was clicked.", vertexName.toStdString());
+    std::string gbkStr = utils::utf8_to_ansi(utf8Str);
+    spdlog::debug(gbkStr);
     hidePopup();
     QGraphicsItem::mousePressEvent(event);  // 调用父类方法继续处理默认行为
 }
@@ -117,7 +122,10 @@ void VertexItem::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 // Override the hoverEnterEvent to show the tooltip
 void VertexItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (!popup) {
-        spdlog::debug("Vertex {} popup.", vertexName.toStdString());
+        std::string utf8Str = fmt::format("Vertex {} popup.", vertexName.toStdString());
+        std::string gbkStr = utils::utf8_to_ansi(utf8Str);
+        spdlog::debug(gbkStr);
+
         popup = new VertexInfoPopup("节点名称：" + this->vertexName, nullptr);
         popup->move(event->screenPos());  // 设置悬浮窗的位置
         popup->show();  // 显示悬浮窗
@@ -135,7 +143,10 @@ void VertexItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 // 定义隐藏悬浮窗的函数
 void VertexItem::hidePopup() {
     if (popup) {
-        spdlog::debug("Vertex {} popup deleted.", vertexName.toStdString());
+        std::string utf8Str = fmt::format("Vertex {} popup deleted.", vertexName.toStdString());
+        std::string gbkStr = utils::utf8_to_ansi(utf8Str);
+        spdlog::debug(gbkStr);
+
         popup->close();  // 关闭悬浮窗
         delete popup;  // 删除悬浮窗对象
         popup = nullptr;  // 将指针重置为空
