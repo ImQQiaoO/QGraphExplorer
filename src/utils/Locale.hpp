@@ -19,53 +19,33 @@ namespace utils {
     }
 
     template <typename _ = void>
-    inline std::string ansi_to_utf8(std::string_view ansi_str) {
-        const char *src_str = ansi_str.data();
-        const int byte_len = static_cast<int>(ansi_str.length() * sizeof(char));
-        int len = MultiByteToWideChar(CP_ACP, 0, src_str, byte_len, nullptr, 0);
-        const std::size_t wstr_length = static_cast<std::size_t>(len) + 1U;
-        auto wstr = new wchar_t[wstr_length];
-        memset(wstr, 0, sizeof(wstr[0]) * wstr_length);
-        MultiByteToWideChar(CP_ACP, 0, src_str, byte_len, wstr, len);
+    inline std::string ansi_to_utf8(const std::string &ansi_str) {
+        int wide_size = MultiByteToWideChar(CP_ACP, 0, ansi_str.c_str(), -1, nullptr, 0);
+        if (wide_size <= 0) return {};
+        std::wstring wide_str(wide_size, L'\0');
+        MultiByteToWideChar(CP_ACP, 0, ansi_str.c_str(), -1, &wide_str[0], wide_size);
+        int utf8_size = WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), -1, nullptr, 0, nullptr, nullptr);
+        if (utf8_size <= 0) return {};
+        std::string utf8_str(utf8_size, '\0');
+        WideCharToMultiByte(CP_UTF8, 0, wide_str.c_str(), -1, &utf8_str[0], utf8_size, nullptr, nullptr);
+        utf8_str.resize(utf8_size - 1);
 
-        len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, nullptr, 0, nullptr, nullptr);
-        const std::size_t str_length = static_cast<std::size_t>(len) + 1;
-        auto str = new char[str_length];
-        memset(str, 0, sizeof(str[0]) * str_length);
-        WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, nullptr, nullptr);
-        std::string strTemp = str;
-
-        delete[] wstr;
-        wstr = nullptr;
-        delete[] str;
-        str = nullptr;
-
-        return strTemp;
+        return utf8_str;
     }
 
     template <typename _ = void>
-    inline std::string utf8_to_ansi(std::string_view utf8_str) {
-        const char *src_str = utf8_str.data();
-        const int byte_len = static_cast<int>(utf8_str.length() * sizeof(char));
-        int len = MultiByteToWideChar(CP_UTF8, 0, src_str, byte_len, nullptr, 0);
-        const std::size_t wsz_ansi_length = static_cast<std::size_t>(len) + 1U;
-        auto wsz_ansi = new wchar_t[wsz_ansi_length];
-        memset(wsz_ansi, 0, sizeof(wsz_ansi[0]) * wsz_ansi_length);
-        MultiByteToWideChar(CP_UTF8, 0, src_str, byte_len, wsz_ansi, len);
+    inline std::string utf8_to_ansi(const std::string &utf8_str) {
+        int wide_size = MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), -1, nullptr, 0);
+        if (wide_size <= 0) return {};
+        std::wstring wide_str(wide_size, L'\0');
+        MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), -1, wide_str.data(), wide_size);
+        int ansi_size = WideCharToMultiByte(CP_ACP, 0, wide_str.c_str(), -1, nullptr, 0, nullptr, nullptr);
+        if (ansi_size <= 0) return {};
+        std::string ansi_str(ansi_size, '\0');
+        WideCharToMultiByte(CP_ACP, 0, wide_str.c_str(), -1, ansi_str.data(), ansi_size, nullptr, nullptr);
+        ansi_str.resize(ansi_size - 1);
 
-        len = WideCharToMultiByte(CP_ACP, 0, wsz_ansi, -1, nullptr, 0, nullptr, nullptr);
-        const std::size_t sz_ansi_length = static_cast<std::size_t>(len) + 1;
-        auto sz_ansi = new char[sz_ansi_length];
-        memset(sz_ansi, 0, sizeof(sz_ansi[0]) * sz_ansi_length);
-        WideCharToMultiByte(CP_ACP, 0, wsz_ansi, -1, sz_ansi, len, nullptr, nullptr);
-        std::string strTemp(sz_ansi);
-
-        delete[] wsz_ansi;
-        wsz_ansi = nullptr;
-        delete[] sz_ansi;
-        sz_ansi = nullptr;
-
-        return strTemp;
+        return ansi_str;
     }
 
     template <typename _ = void>
