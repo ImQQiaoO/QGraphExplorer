@@ -12,6 +12,7 @@ GraphWidget::GraphWidget(QWidget *parent)
     setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
     // 设置场景的边界
     scene->setSceneRect(-4000, -4000, 8000, 8000);
+    //scene->setSceneRect(-800, -800, 800, 800);
 
     // 使用定时器定时执行力导向布局算法
     QTimer *timer = new QTimer(this);
@@ -20,7 +21,7 @@ GraphWidget::GraphWidget(QWidget *parent)
         calculateForces(this);
         auto nodes = this->getVertices();
         // 更新节点位置（使用适当的时间步长）
-        double timeStep = 0.1;  // 可根据需求调整时间步长
+        double timeStep = 0.21;  // 可根据需求调整时间步长
         for (auto node : nodes) {
             VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node);
             if (vertex) {
@@ -36,8 +37,9 @@ GraphWidget::GraphWidget(QWidget *parent)
     });
 
     // 启动定时器，每 16 毫秒更新一次，相当于每秒约 60 帧
-    timer->start(16);
-
+    //timer->start(16);
+    timer->start(32);
+    setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     // 设置为橡皮筋拖拽模式，支持鼠标框选多个顶点
     setDragMode(QGraphicsView::RubberBandDrag);
 }
@@ -149,7 +151,7 @@ void calculateForces(GraphWidget *graphWidget) {
                 QPointF delta = vi->pos() - vj->pos();
                 // 使用欧几里得距离，避免除以零
                 double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-                double repulsiveForce = 1000000.0 / (distance * distance); // 距离越小，排斥力越大（平方反比）
+                double repulsiveForce = 10000.0 / (distance * distance); // 距离越小，排斥力越大（平方反比）
                 QPointF direction = delta / distance;
                 // 为节点施加排斥力
                 vi->setForce(vi->getForce() + repulsiveForce * direction);

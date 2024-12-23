@@ -11,6 +11,7 @@
 *.dylib
 
 .vs
+.vscode
 QtWidget.*
 x64
 cmake-bulid-debug
