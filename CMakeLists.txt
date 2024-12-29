@@ -15,16 +15,25 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
+set(FILE_ROOT_DIR "${CMAKE_SOURCE_DIR}")
+add_definitions(-DROOT_DIR="${FILE_ROOT_DIR}")
+
 # 引入 FetchContent 模块
 include(FetchContent)
 
-# 引入 spdlog 库
 FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.11.0 # 指定版本，可以根据需要更改
+        GIT_TAG v1.11.0
 )
-FetchContent_MakeAvailable(spdlog)
+
+FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.2
+)
+
+FetchContent_MakeAvailable(spdlog nlohmann_json)
 
 add_executable(QGraphExplorer
         src/main.cpp
@@ -38,15 +47,17 @@ add_executable(QGraphExplorer
         src/QuadTree.cpp
         src/utils/Locale.hpp
         src/Movie.cpp
-        src/Movie.h
-        src/Movie.h
+        src/JSONProcessor.cpp
 )
+
+target_compile_definitions(QGraphExplorer PRIVATE BUILD_WITH_CMAKE)
 
 target_link_libraries(QGraphExplorer
         Qt::Core
         Qt::Gui
         Qt::Widgets
         spdlog::spdlog
+        nlohmann_json::nlohmann_json
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)

@@ -1,6 +1,8 @@
 ﻿#include "JSONProcessor.h"
 #include <fstream>
+#include <iostream>
 #include <QMessageBox>
+#include "Movie.h" 
 
 namespace {
     std::string json_path = "movie.json";
@@ -20,4 +22,14 @@ void JSONProcessor::json_loader() {
     // 解析 JSON 数据
     json j;
     input_file >> j;
+
+    std::vector<Movie> movies;
+    for (size_t i = 0; i < 50; ++i) {
+        Movie movie = j[i].get<Movie>();
+        movies.push_back(movie);
+    }
+
+    for (const auto &movie : movies) {
+        std::cout << movie << '\n';
+    }
 }
