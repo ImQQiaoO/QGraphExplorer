@@ -125,7 +125,7 @@
     <ClCompile Include="src\VertexWithInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\MyDocuments\movie.json" />
+    <None Include="movie.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
