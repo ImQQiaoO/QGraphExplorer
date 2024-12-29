@@ -105,7 +105,6 @@
     <ClInclude Include="src\EdgeItem.h" />
     <ClInclude Include="src\JSONProcessor.h" />
     <ClInclude Include="src\Movie.h" />
-    <ClInclude Include="src\QuadTree.h" />
     <ClInclude Include="src\utils\Locale.hpp" />
     <ClInclude Include="src\VertexInfoPopup.h" />
     <ClInclude Include="src\VertexItem.h" />
@@ -121,7 +120,6 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\Movie.cpp" />
-    <ClCompile Include="src\QuadTree.cpp" />
     <ClCompile Include="src\VertexInfoPopup.cpp" />
     <ClCompile Include="src\VertexItem.cpp" />
     <ClCompile Include="src\VertexWithInfo.cpp" />
