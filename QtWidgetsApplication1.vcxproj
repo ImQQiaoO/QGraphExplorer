@@ -103,6 +103,8 @@
   <ItemGroup>
     <ClInclude Include="src\AddItems.h" />
     <ClInclude Include="src\EdgeItem.h" />
+    <ClInclude Include="src\JSONProcessor.h" />
+    <ClInclude Include="src\QuadTree.h" />
     <ClInclude Include="src\utils\Locale.hpp" />
     <ClInclude Include="src\VertexInfoPopup.h" />
     <ClInclude Include="src\VertexItem.h" />
@@ -114,11 +116,16 @@
     <ClCompile Include="src\AddItems.cpp" />
     <ClCompile Include="src\EdgeItem.cpp" />
     <ClCompile Include="src\GraphWidget.cpp" />
+    <ClCompile Include="src\JSONProcessor.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="src\QuadTree.cpp" />
     <ClCompile Include="src\VertexInfoPopup.cpp" />
     <ClCompile Include="src\VertexItem.cpp" />
     <ClCompile Include="src\VertexWithInfo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\MyDocuments\movie.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -23,6 +23,7 @@ public:
     // 获取顶点
     QMap<QString, VertexItem *> getVertices();
     std::vector<std::pair<VertexItem *, VertexItem * >> getEdges();
+    QGraphicsScene *scene;
 
 
 protected:
@@ -33,7 +34,6 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
 
 private:
-    QGraphicsScene *scene;
     QMap<QString, VertexItem *> vertices;  // 用来存储顶点
     std::vector<std::pair<VertexItem *, VertexItem * >> edges;    // 用来存储边
 

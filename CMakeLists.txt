@@ -35,6 +35,7 @@ add_executable(QGraphExplorer
         src/AddItems.cpp
         src/VertexWithInfo.cpp
         src/VertexInfoPopup.cpp
+        src/QuadTree.cpp
         src/utils/Locale.hpp
         src/Movie.cpp
         src/Movie.h
