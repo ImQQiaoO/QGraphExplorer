@@ -2,8 +2,41 @@
 #include <QWheelEvent>
 #include <QTimer>
 #include "EdgeItem.h"
-#include "QuadTree.h"
 #include "VertexWithInfo.h"
+
+namespace {
+    QRectF calculateDynamicBoundary(const QMap<QString, VertexItem *> &nodes) {
+        if (nodes.isEmpty()) {
+            // 如果没有节点，返回一个默认边界
+            return {-1000, -1000, 2000, 2000};
+        }
+
+        // 初始化最小和最大值
+        double minX = std::numeric_limits<double>::max();
+        double minY = std::numeric_limits<double>::max();
+        double maxX = std::numeric_limits<double>::lowest();
+        double maxY = std::numeric_limits<double>::lowest();
+
+        // 遍历所有节点，找出最小和最大位置
+        for (auto node : nodes) {
+            if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
+                QPointF pos = vertex->pos();
+                minX = std::min(minX, pos.x());
+                minY = std::min(minY, pos.y());
+                maxX = std::max(maxX, pos.x());
+                maxY = std::max(maxY, pos.y());
+            }
+        }
+
+        // 给边界添加一定的缓冲区以避免节点靠近边界时超出
+        double padding = 200.0; // 缓冲区大小
+        return {
+            minX - padding, minY - padding,
+            (maxX - minX) + 2 * padding,
+            (maxY - minY) + 2 * padding
+        };
+    }
+}
 
 GraphWidget::GraphWidget(QWidget *parent)
     : QGraphicsView(parent) {
@@ -12,8 +45,8 @@ GraphWidget::GraphWidget(QWidget *parent)
     setScene(scene);
     setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
     // 设置场景的边界
-    scene->setSceneRect(-4000, -4000, 8000, 8000);
-    //scene->setSceneRect(-800, -800, 800, 800);
+    QRectF dynamicBoundary = calculateDynamicBoundary(this->getVertices()); // 根据节点计算边界
+    scene->setSceneRect(dynamicBoundary);
 
     // 使用定时器定时执行力导向布局算法
     QTimer *timer = new QTimer(this);
@@ -22,9 +55,9 @@ GraphWidget::GraphWidget(QWidget *parent)
         calculateForces(this);
         auto nodes = this->getVertices();
         // 更新节点位置（使用适当的时间步长）
-        for (const auto node : nodes) {
+        for (auto node : nodes) {
             if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
-                double timeStep = 0.1;
+                double timeStep = 0.21;
                 QPointF newPos = vertex->pos() + vertex->getForce() * timeStep;
                 // 可选：防止节点移动超出可视区域
                 QRectF bounds = scene->sceneRect();
@@ -128,26 +161,6 @@ std::vector<std::pair<VertexItem *, VertexItem * >> GraphWidget::getEdges() {
     return edges;
 }
 
-static void computeRepulsiveForce(VertexWithInfo *node, QuadTree::QuadNode *quadNode) {
-    if (!quadNode) return;
-
-    QPointF delta = node->pos() - quadNode->centerOfMass;
-    double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-
-    if (quadNode->isLeaf() || quadNode->boundary.width() / distance < 0.5) {
-        // 近似计算排斥力
-        double repulsiveForce = 10000.0 * quadNode->mass / (distance * distance);
-        QPointF direction = delta / distance;
-        node->setForce(node->getForce() + repulsiveForce * direction);
-    } else {
-        // 递归遍历子节点
-        for (auto& i : quadNode->children) {
-            computeRepulsiveForce(node, i);
-        }
-    }
-}
-
-
 void calculateForces(GraphWidget *graphWidget) {
     auto nodes = graphWidget->getVertices();
     auto edges = graphWidget->getEdges();
@@ -159,33 +172,39 @@ void calculateForces(GraphWidget *graphWidget) {
         }
     }
 
-    // 创建四叉树并插入所有节点
-    QRectF boundary = graphWidget->scene->sceneRect();
-    QuadTree quadTree(boundary);
-    for (auto &node : nodes) {
-        if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
-            quadTree.insert(vertex);
+    // 计算排斥力（所有节点对之间的排斥力）
+    for (auto i = nodes.begin(); i != nodes.end(); ++i) {
+        for (auto j = i; j != nodes.end(); ++j) {
+            // 为了避免重复计算同一个节点对，从 j 的下一个节点开始
+            if (i == j) continue;
+            VertexWithInfo *vi = dynamic_cast<VertexWithInfo *>(i.value());
+            VertexWithInfo *vj = dynamic_cast<VertexWithInfo *>(j.value());
+            if (vi && vj) {
+                QPointF delta = vi->pos() - vj->pos();
+                // 使用欧几里得距离，避免除以零
+                double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
+                double repulsiveForce = 10000.0 / (distance * distance); // 距离越小，排斥力越大（平方反比）
+                QPointF direction = delta / distance;
+                // 为节点施加排斥力
+                vi->setForce(vi->getForce() + repulsiveForce * direction);
+                vj->setForce(vj->getForce() - repulsiveForce * direction);
+            }
         }
     }
-    quadTree.computeMassAndCenter();
 
-    // 使用四叉树计算排斥力
-    for (auto &node : nodes) {
-        VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node);
-        if (vertex) {
-            computeRepulsiveForce(vertex, quadTree.root);
-        }
-    }
-
-    // 计算吸引力（保持不变）
+    // 计算吸引力（相连的节点之间的吸引力）
     for (auto &edge : edges) {
         VertexWithInfo *vi = dynamic_cast<VertexWithInfo *>(edge.first);
         VertexWithInfo *vj = dynamic_cast<VertexWithInfo *>(edge.second);
         if (vi && vj) {
+            // 计算两个节点之间的位移向量和欧几里得距离
             QPointF delta = vi->pos() - vj->pos();
+            // 使用欧几里得距离，避免为 0
             double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-            double attractiveForce = (distance * distance) / 1000.0;
+            // 计算吸引力，通常吸引力与距离呈线性关系，这里设为 F = k * d
+            double attractiveForce = (distance * distance) / 1000.0; // k 可以根据图大小调整
             QPointF direction = delta / distance;
+            // 更新节点的力（相连节点向彼此靠拢）
             vi->setForce(vi->getForce() - attractiveForce * direction);
             vj->setForce(vj->getForce() + attractiveForce * direction);
         }
