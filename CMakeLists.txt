@@ -36,6 +36,9 @@ add_executable(QGraphExplorer
         src/VertexWithInfo.cpp
         src/VertexInfoPopup.cpp
         src/utils/Locale.hpp
+        src/Movie.cpp
+        src/Movie.h
+        src/Movie.h
 )
 
 target_link_libraries(QGraphExplorer

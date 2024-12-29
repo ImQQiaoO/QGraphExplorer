@@ -9,6 +9,9 @@
 
 class AddItems {
     static void addDebug(GraphWidget *graphWidget) {
+
+
+
         // 添加一些顶点
         // 使用梅森旋转生成随机位置，范围-200到200
         // 初始化随机数生成器，使用随机设备作为种子
@@ -38,7 +41,7 @@ class AddItems {
         //graphWidget->addVertex("C", ShapeType::Circle, QPointF(0, 100));
         //graphWidget->addVertex("D", ShapeType::Rectangle, QPointF(150, 100));
 
-        std::uniform_int_distribution<int> total(175, 250);
+        /*std::uniform_int_distribution<int> total(175, 250);
         //std::uniform_int_distribution<int> total(750, 1000);
         int total_gen = total(gen);
         std::string num_info = fmt::format("Total gen is: {}", total_gen);
@@ -61,7 +64,10 @@ class AddItems {
                 std::uniform_int_distribution<int> next(0, total_gen - 1);
                 graphWidget->addEdge(QString::number(i), QString::number(next(gen)));
             }
-        }
+
+
+
+        }*/
     }
 
 
