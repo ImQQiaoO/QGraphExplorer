@@ -9,9 +9,6 @@
 
 class AddItems {
     static void addDebug(GraphWidget *graphWidget) {
-
-
-
         // 添加一些顶点
         // 使用梅森旋转生成随机位置，范围-200到200
         // 初始化随机数生成器，使用随机设备作为种子
