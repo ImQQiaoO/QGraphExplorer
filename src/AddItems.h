@@ -38,7 +38,7 @@ class AddItems {
         //graphWidget->addVertex("C", ShapeType::Circle, QPointF(0, 100));
         //graphWidget->addVertex("D", ShapeType::Rectangle, QPointF(150, 100));
 
-        /*std::uniform_int_distribution<int> total(175, 250);
+        std::uniform_int_distribution<int> total(175, 250);
         //std::uniform_int_distribution<int> total(750, 1000);
         int total_gen = total(gen);
         std::string num_info = fmt::format("Total gen is: {}", total_gen);
@@ -61,10 +61,7 @@ class AddItems {
                 std::uniform_int_distribution<int> next(0, total_gen - 1);
                 graphWidget->addEdge(QString::number(i), QString::number(next(gen)));
             }
-
-
-
-        }*/
+        }
     }
 
 
