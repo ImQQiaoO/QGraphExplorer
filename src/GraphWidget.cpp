@@ -53,8 +53,8 @@ GraphWidget::GraphWidget(QWidget *parent)
     setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
     // 设置场景的边界
     QRectF dynamicBoundary = calculateDynamicBoundary(this->getVertices()); // 根据节点计算边界
-    scene->setSceneRect(dynamicBoundary);
-
+    QRectF extendedBoundary = dynamicBoundary.adjusted(-10000, -10000, 10000, 10000); // 增大边界
+    scene->setSceneRect(extendedBoundary);
     // 使用定时器定时执行力导向布局算法
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [&]() {

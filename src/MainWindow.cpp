@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(lineEdit, &QLineEdit::returnPressed, this, &MainWindow::on_returnPressed);
 
     // 设置窗口大小
-    resize(800000, 600000);  // 设置初始窗口大小为 800x600
+    resize(800, 600);  // 设置初始窗口大小为 800x600
 
 }
 

@@ -25,7 +25,7 @@ void JSONProcessor::json_loader() {
     json j;
     input_file >> j;
 
-    for (size_t i = 0; i < 50; ++i) {
+    for (size_t i = 0; i < 70; ++i) {
         Movie movie = j[i].get<Movie>();
         movies.push_back(movie);
     }

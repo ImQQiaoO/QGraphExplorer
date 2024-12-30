@@ -17,7 +17,7 @@ class AddItems {
         std::mt19937 gen(rd());  // mt19937 是一个随机数生成器
 
         // 定义一个均匀分布，范围从 -200.0 到 200.0
-        std::uniform_real_distribution<double> distrib(-1000000.0, 500000.0);
+        std::uniform_real_distribution<double> distrib(-200.0, 200.0);
 
         /*graphWidget->addVertex("你好", ShapeType::Circle,
             QPointF(distrib(gen), distrib(gen)));
