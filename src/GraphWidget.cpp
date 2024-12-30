@@ -1,3 +1,5 @@
+// GraphWidget.cpp
+
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QTimer>
@@ -107,7 +109,9 @@ namespace {
                     if (other != vertex) {
                         QPointF delta = vertex->pos() - other->pos();
                         double distance = std::max(std::hypot(delta.x(), delta.y()), 0.01);
-                        double repulsiveForce = (1500 * mass) / (distance * distance);
+                        double repulsiveForce = (300 * mass) / (distance * distance); // 调整后的斥力常数
+                        double maxRepulsiveForce = 1000.0; // 斥力上限
+                        repulsiveForce = std::min(repulsiveForce, maxRepulsiveForce);
                         QPointF direction = delta / distance;
                         force += repulsiveForce * direction;
                     }
@@ -118,7 +122,9 @@ namespace {
                 double distance = std::max(std::hypot(delta.x(), delta.y()), 0.01);
                 if (boundary.width() / distance < THETA) {
                     // 使用质心近似
-                    double repulsiveForce = (1500 * mass) / (distance * distance);  // 可调参数
+                    double repulsiveForce = (300 * mass) / (distance * distance); // 调整后的斥力常数
+                    double maxRepulsiveForce = 1000.0; // 斥力上限
+                    repulsiveForce = std::min(repulsiveForce, maxRepulsiveForce);
                     QPointF direction = delta / distance;
                     force += repulsiveForce * direction;
                 } else {
@@ -218,7 +224,7 @@ GraphWidget::GraphWidget(QWidget *parent)
     setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
     // 设置场景的边界
     QRectF dynamicBoundary = calculateDynamicBoundary(this->getVertices()); // 根据节点计算边界
-    QRectF extendedBoundary = dynamicBoundary.adjusted(-10000, -10000, 10000, 10000); // 增大边界
+    QRectF extendedBoundary = dynamicBoundary.adjusted(-1000, -1000, 1000, 1000); // 增大边界
     scene->setSceneRect(extendedBoundary);
     // 使用定时器定时执行力导向布局算法
     QTimer *timer = new QTimer(this);
@@ -228,18 +234,35 @@ GraphWidget::GraphWidget(QWidget *parent)
         auto nodes = this->getVertices();
         // 更新节点位置（使用适当的时间步长和阻尼）
 
+        double damping = 0.95; // 阻尼
+        double timeStep = 0.58; // 时间步长
+        double maxSpeed = 75.0; // 最大移动速度
+        double minMoveThreshold = 0.1; // 最小移动阈值
+
         for (auto node : nodes) {
             if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
-                double damping = 0.9;
-                double timeStep = 0.6;
                 QPointF force = vertex->getForce();
                 QPointF velocity = vertex->getVelocity();
 
                 // 更新速度
                 velocity = velocity * damping + force * timeStep;
 
+                // 限制最大速度
+                double speed = std::hypot(velocity.x(), velocity.y());
+                if (speed > maxSpeed) {
+                    velocity = velocity / speed * maxSpeed;
+                }
+
                 // 更新位置
                 QPointF newPos = vertex->pos() + velocity;
+
+                // 检查是否移动超过最小阈值
+                QPointF movement = newPos - vertex->pos();
+                if (std::hypot(movement.x(), movement.y()) < minMoveThreshold) {
+                    // 如果移动量小于阈值，则停止移动
+                    vertex->setVelocity(QPointF(0, 0));
+                    continue;
+                }
 
                 // 限制节点移动在边界内
                 QRectF bounds = scene->sceneRect();
@@ -414,12 +437,23 @@ void calculateForces(GraphWidget *graphWidget) {
         if (vi && vj) {
             QPointF delta = vi->pos() - vj->pos();
             double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-            double attractiveForce = (distance * distance) / 75000.0; // 可调参数
+            double attractiveForce = (distance * distance) / 50000.0; // 调整后的吸引力常数
             QPointF direction = delta / distance;
             vi->addForce(-attractiveForce * direction);
             vj->addForce(attractiveForce * direction);
         }
     }
+
+    // 添加中心引力
+    //QPointF sceneCenter = graphWidget->scene->sceneRect().center();
+    //double centerStrength = 0.05; // 可调参数
+
+    //for (auto &vertex : vertexList) {
+    //    QPointF delta = sceneCenter - vertex->pos();
+    //    double distance = std::max(std::hypot(delta.x(), delta.y()), 0.01);
+    //    QPointF centerForce = centerStrength * delta / distance;
+    //    vertex->addForce(centerForce);
+    //}
 
     // 更新所有节点的位置
     QRectF sceneBounds = graphWidget->getSceneBounds();
@@ -430,4 +464,3 @@ void calculateForces(GraphWidget *graphWidget) {
     // 更新场景显示
     graphWidget->scene->update();
 }
-
