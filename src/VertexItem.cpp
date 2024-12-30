@@ -7,6 +7,8 @@
 #include "utils/Locale.hpp"
 
 
+
+
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
     : QGraphicsItem(parent), vertexName(std::move(name)), shapeType(shape) {
     setFlag(QGraphicsItem::ItemIsMovable);

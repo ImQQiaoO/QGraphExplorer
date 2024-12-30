@@ -10,6 +10,7 @@ void from_json(const json &j, Movie &movie) {
     }
 }
 
+
 std::ostream &operator<<(std::ostream &os, const Movie &movie) {
     os << "Movie Name: " << utils::utf8_to_ansi(movie.movieName) << '\n';
     os << "Actors: [\n";

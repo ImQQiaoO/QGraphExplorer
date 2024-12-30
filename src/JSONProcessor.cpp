@@ -30,7 +30,4 @@ void JSONProcessor::json_loader() {
         movies.push_back(movie);
     }
 
-    for (const auto &movie : movies) {
-        std::cout << movie << '\n';
-    }
 }
