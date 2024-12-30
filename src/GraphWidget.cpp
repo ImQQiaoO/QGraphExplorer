@@ -12,7 +12,7 @@
 #include "VertexWithInfo.h"
 
 namespace {
-    constexpr double THETA = 0.5;  // 用于判断是否使用质心的阈值
+    constexpr double THETA = 0.8;  // 用于判断是否使用质心的阈值
 
     // 定义一个四叉树类，用于空间分割
     class QuadTree {
@@ -30,8 +30,8 @@ namespace {
 
         // 构造函数
         QuadTree(QRectF boundary, int capacity)
-            : boundary(boundary), capacity(capacity), divided(false), mass(0) {
-            NW = NE = SW = SE = nullptr;
+            : boundary(boundary), capacity(capacity), divided(false), centerOfMass(0, 0), mass(0),
+            NW(nullptr), NE(nullptr), SW(nullptr), SE(nullptr) {
         }
 
         // 插入一个点到四叉树中
@@ -40,9 +40,11 @@ namespace {
                 return false;  // 如果点不在当前区域内，则不插入
             }
 
-            if (points.size() < capacity) {
+            if (points.size() < capacity && !divided) {
                 points.push_back(vertex);
                 mass += 1;
+                // 更新质心
+                centerOfMass += vertex->pos();
                 return true;
             }
 
@@ -52,22 +54,25 @@ namespace {
             }
 
             // 尝试将点插入四个子区域
-            if (NW->insert(vertex)) return true;
-            if (NE->insert(vertex)) return true;
-            if (SW->insert(vertex)) return true;
-            if (SE->insert(vertex)) return true;
+            if (NW->insert(vertex)) {} else if (NE->insert(vertex)) {} else if (SW->insert(vertex)) {} else if (SE->insert(vertex)) {} else {
+                // 插入失败，可能因为边界计算错误
+                return false;
+            }
 
-            return false;
+            // 更新当前节点的质量和质心
+            updateCenterOfMass();
+
+            return true;
         }
 
         // 分割四叉树
         void subdivide() {
             double midX = (boundary.left() + boundary.right()) / 2;
             double midY = (boundary.top() + boundary.bottom()) / 2;
-            QRectF nw(midX, boundary.top(), boundary.width() / 2, boundary.height() / 2);
-            QRectF ne(boundary.left(), boundary.top(), boundary.width() / 2, boundary.height() / 2);
-            QRectF sw(midX, boundary.bottom(), boundary.width() / 2, boundary.height() / 2);
-            QRectF se(boundary.left(), boundary.bottom(), boundary.width() / 2, boundary.height() / 2);
+            QRectF nw(boundary.left(), boundary.top(), boundary.width() / 2, boundary.height() / 2);
+            QRectF ne(midX, boundary.top(), boundary.width() / 2, boundary.height() / 2);
+            QRectF sw(boundary.left(), midY, boundary.width() / 2, boundary.height() / 2);
+            QRectF se(midX, midY, boundary.width() / 2, boundary.height() / 2);
 
             NW = new QuadTree(nw, capacity);
             NE = new QuadTree(ne, capacity);
@@ -76,37 +81,48 @@ namespace {
 
             divided = true;
 
-            // 重新插入当前节点
+            // 重新插入当前节点，仅插入到一个子区域
             for (auto &point : points) {
-                NW->insert(point);
-                NE->insert(point);
-                SW->insert(point);
-                SE->insert(point);
+                if (NW->insert(point)) continue;
+                if (NE->insert(point)) continue;
+                if (SW->insert(point)) continue;
+                if (SE->insert(point)) continue;
             }
             points.clear();  // 清空当前节点
+
+            // 更新质心和质量
+            updateCenterOfMass();
         }
 
         // 计算某个节点的斥力
         QPointF calculateForce(VertexWithInfo *vertex) {
             QPointF force(0, 0);
-            if (points.size() == 1) {
-                VertexWithInfo *other = points[0];
-                if (other != vertex) {
-                    QPointF delta = vertex->pos() - other->pos();
-                    double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-                    double repulsiveForce = 100000.0 / (distance * distance);
-                    QPointF direction = delta / distance;
-                    force += repulsiveForce * direction;
+            if (mass == 0 || (mass == 1 && points.empty())) {
+                return force;  // 没有质量或者只有自身
+            }
+
+            if (!divided) {
+                // 叶子节点，逐一计算斥力
+                for (auto &other : points) {
+                    if (other != vertex) {
+                        QPointF delta = vertex->pos() - other->pos();
+                        double distance = std::max(std::hypot(delta.x(), delta.y()), 0.01);
+                        double repulsiveForce = (1500 * mass) / (distance * distance);
+                        QPointF direction = delta / distance;
+                        force += repulsiveForce * direction;
+                    }
                 }
             } else {
-                // 如果区域足够大且距离足够远，则使用质心计算
-                double distance = std::max(std::hypot(vertex->pos().x() - centerOfMass.x(), vertex->pos().y() - centerOfMass.y()), 1.0);
+                // 内部节点，决定是否使用近似
+                QPointF delta = vertex->pos() - centerOfMass;
+                double distance = std::max(std::hypot(delta.x(), delta.y()), 0.01);
                 if (boundary.width() / distance < THETA) {
-                    QPointF delta = vertex->pos() - centerOfMass;
-                    double repulsiveForce = 100000.0 / (distance * distance);
+                    // 使用质心近似
+                    double repulsiveForce = (1500 * mass) / (distance * distance);  // 可调参数
                     QPointF direction = delta / distance;
                     force += repulsiveForce * direction;
                 } else {
+                    // 递归计算子节点的力
                     if (NW) force += NW->calculateForce(vertex);
                     if (NE) force += NE->calculateForce(vertex);
                     if (SW) force += SW->calculateForce(vertex);
@@ -116,29 +132,54 @@ namespace {
             return force;
         }
 
-        // 计算整个四叉树的质心
-        void calculateCenterOfMass() {
-            if (points.empty()) {
-                centerOfMass = QPointF(0, 0);
-                return;
-            }
-
-            double totalX = 0, totalY = 0;
-            for (auto &point : points) {
-                totalX += point->pos().x();
-                totalY += point->pos().y();
-            }
-
-            centerOfMass = QPointF(totalX / points.size(), totalY / points.size());
-        }
-
-        // 更新质心并重新计算
+        // 计算整个四叉树的质心和质量
         void updateCenterOfMass() {
-            if (points.empty()) {
-                mass = 0;
-                centerOfMass = QPointF(0, 0);
+            if (!divided) {
+                if (points.empty()) {
+                    mass = 0;
+                    centerOfMass = QPointF(0, 0);
+                } else {
+                    // 计算当前节点的质心和质量
+                    double totalX = 0, totalY = 0;
+                    for (auto &point : points) {
+                        totalX += point->pos().x();
+                        totalY += point->pos().y();
+                    }
+                    mass = points.size();
+                    centerOfMass = QPointF(totalX / mass, totalY / mass);
+                }
             } else {
-                calculateCenterOfMass();
+                // 汇总子节点的质心和质量
+                double totalMass = 0;
+                double totalX = 0, totalY = 0;
+
+                if (NW->mass > 0) {
+                    totalMass += NW->mass;
+                    totalX += NW->centerOfMass.x() * NW->mass;
+                    totalY += NW->centerOfMass.y() * NW->mass;
+                }
+                if (NE->mass > 0) {
+                    totalMass += NE->mass;
+                    totalX += NE->centerOfMass.x() * NE->mass;
+                    totalY += NE->centerOfMass.y() * NE->mass;
+                }
+                if (SW->mass > 0) {
+                    totalMass += SW->mass;
+                    totalX += SW->centerOfMass.x() * SW->mass;
+                    totalY += SW->centerOfMass.y() * SW->mass;
+                }
+                if (SE->mass > 0) {
+                    totalMass += SE->mass;
+                    totalX += SE->centerOfMass.x() * SE->mass;
+                    totalY += SE->centerOfMass.y() * SE->mass;
+                }
+
+                mass = totalMass;
+                if (mass > 0) {
+                    centerOfMass = QPointF(totalX / mass, totalY / mass);
+                } else {
+                    centerOfMass = QPointF(0, 0);
+                }
             }
         }
     };
@@ -189,8 +230,8 @@ GraphWidget::GraphWidget(QWidget *parent)
 
         for (auto node : nodes) {
             if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
-                double damping = 0.85;
-                double timeStep = 0.5;
+                double damping = 0.9;
+                double timeStep = 0.6;
                 QPointF force = vertex->getForce();
                 QPointF velocity = vertex->getVelocity();
 
@@ -373,7 +414,7 @@ void calculateForces(GraphWidget *graphWidget) {
         if (vi && vj) {
             QPointF delta = vi->pos() - vj->pos();
             double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-            double attractiveForce = (distance * distance) / 10000.0; // 可调参数
+            double attractiveForce = (distance * distance) / 75000.0; // 可调参数
             QPointF direction = delta / distance;
             vi->addForce(-attractiveForce * direction);
             vj->addForce(attractiveForce * direction);
