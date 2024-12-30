@@ -2,7 +2,9 @@
 #include <fstream>
 #include <iostream>
 #include <QMessageBox>
-#include "Movie.h" 
+#include "Movie.h"
+
+std::vector<Movie> JSONProcessor::movies;
 
 namespace {
     std::string json_path = "movie.json";
@@ -23,7 +25,6 @@ void JSONProcessor::json_loader() {
     json j;
     input_file >> j;
 
-    std::vector<Movie> movies;
     for (size_t i = 0; i < 50; ++i) {
         Movie movie = j[i].get<Movie>();
         movies.push_back(movie);
