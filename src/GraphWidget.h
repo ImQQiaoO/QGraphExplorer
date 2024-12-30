@@ -20,11 +20,11 @@ public:
     // 添加一条边到图中
     void addEdge(const QString &vertex1, const QString &vertex2);
 
+    QGraphicsScene *scene;
     // 获取顶点
     QMap<QString, VertexItem *> getVertices();
-    std::vector<std::pair<VertexItem *, VertexItem * >> getEdges();
-    QGraphicsScene *scene;
-
+    std::vector<std::pair<VertexItem *, VertexItem *>> getEdges() const;
+    QRectF getSceneBounds() const;
 
 protected:
     // 捕获鼠标滚轮事件，用来实现缩放

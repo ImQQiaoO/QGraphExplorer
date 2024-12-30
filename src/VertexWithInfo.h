@@ -18,13 +18,11 @@ public:
         force += f;
     }
 
-    QPointF getVelocity() const {
-        return velocity;
-    }
-
-    void setVelocity(const QPointF &v) {
-        velocity = v;
-    }
+    // 获取和设置速度
+    QPointF getVelocity() const;
+    void setVelocity(const QPointF &velocity);
+    // 应用力来更新位置和速度
+    void applyForce(const QRectF &bounds);
 
 private:
     QString name;

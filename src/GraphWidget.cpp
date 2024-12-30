@@ -1,28 +1,158 @@
-#include "GraphWidget.h"
-#include <QWheelEvent>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 #include <QTimer>
-#include "EdgeItem.h"
-#include "VertexWithInfo.h"
+#include <QWheelEvent>
+#include <cmath>
+#include <limits>
 #include <thread>
 #include <vector>
-#include <cmath>
 #include <algorithm>
-#include <limits>
+#include "GraphWidget.h"
+#include "EdgeItem.h"
+#include "VertexWithInfo.h"
 
 namespace {
+    constexpr double THETA = 0.5;  // 用于判断是否使用质心的阈值
+
+    // 定义一个四叉树类，用于空间分割
+    class QuadTree {
+    public:
+        QRectF boundary;  // 当前区域的边界
+        int capacity;     // 当前区域最大容纳的节点数
+        bool divided;     // 是否已被分割
+        QPointF centerOfMass;  // 质心
+        double mass;         // 区域的总质量（节点数量）
+        std::vector<VertexWithInfo *> points;  // 存储在此区域的节点
+        QuadTree *NW;  // 北西
+        QuadTree *NE;  // 北东
+        QuadTree *SW;  // 南西
+        QuadTree *SE;  // 南东
+
+        // 构造函数
+        QuadTree(QRectF boundary, int capacity)
+            : boundary(boundary), capacity(capacity), divided(false), mass(0) {
+            NW = NE = SW = SE = nullptr;
+        }
+
+        // 插入一个点到四叉树中
+        bool insert(VertexWithInfo *vertex) {
+            if (!boundary.contains(vertex->pos())) {
+                return false;  // 如果点不在当前区域内，则不插入
+            }
+
+            if (points.size() < capacity) {
+                points.push_back(vertex);
+                mass += 1;
+                return true;
+            }
+
+            // 如果该区域已满且未分割，则分割区域
+            if (!divided) {
+                subdivide();
+            }
+
+            // 尝试将点插入四个子区域
+            if (NW->insert(vertex)) return true;
+            if (NE->insert(vertex)) return true;
+            if (SW->insert(vertex)) return true;
+            if (SE->insert(vertex)) return true;
+
+            return false;
+        }
+
+        // 分割四叉树
+        void subdivide() {
+            double midX = (boundary.left() + boundary.right()) / 2;
+            double midY = (boundary.top() + boundary.bottom()) / 2;
+            QRectF nw(midX, boundary.top(), boundary.width() / 2, boundary.height() / 2);
+            QRectF ne(boundary.left(), boundary.top(), boundary.width() / 2, boundary.height() / 2);
+            QRectF sw(midX, boundary.bottom(), boundary.width() / 2, boundary.height() / 2);
+            QRectF se(boundary.left(), boundary.bottom(), boundary.width() / 2, boundary.height() / 2);
+
+            NW = new QuadTree(nw, capacity);
+            NE = new QuadTree(ne, capacity);
+            SW = new QuadTree(sw, capacity);
+            SE = new QuadTree(se, capacity);
+
+            divided = true;
+
+            // 重新插入当前节点
+            for (auto &point : points) {
+                NW->insert(point);
+                NE->insert(point);
+                SW->insert(point);
+                SE->insert(point);
+            }
+            points.clear();  // 清空当前节点
+        }
+
+        // 计算某个节点的斥力
+        QPointF calculateForce(VertexWithInfo *vertex) {
+            QPointF force(0, 0);
+            if (points.size() == 1) {
+                VertexWithInfo *other = points[0];
+                if (other != vertex) {
+                    QPointF delta = vertex->pos() - other->pos();
+                    double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
+                    double repulsiveForce = 100000.0 / (distance * distance);
+                    QPointF direction = delta / distance;
+                    force += repulsiveForce * direction;
+                }
+            } else {
+                // 如果区域足够大且距离足够远，则使用质心计算
+                double distance = std::max(std::hypot(vertex->pos().x() - centerOfMass.x(), vertex->pos().y() - centerOfMass.y()), 1.0);
+                if (boundary.width() / distance < THETA) {
+                    QPointF delta = vertex->pos() - centerOfMass;
+                    double repulsiveForce = 100000.0 / (distance * distance);
+                    QPointF direction = delta / distance;
+                    force += repulsiveForce * direction;
+                } else {
+                    if (NW) force += NW->calculateForce(vertex);
+                    if (NE) force += NE->calculateForce(vertex);
+                    if (SW) force += SW->calculateForce(vertex);
+                    if (SE) force += SE->calculateForce(vertex);
+                }
+            }
+            return force;
+        }
+
+        // 计算整个四叉树的质心
+        void calculateCenterOfMass() {
+            if (points.empty()) {
+                centerOfMass = QPointF(0, 0);
+                return;
+            }
+
+            double totalX = 0, totalY = 0;
+            for (auto &point : points) {
+                totalX += point->pos().x();
+                totalY += point->pos().y();
+            }
+
+            centerOfMass = QPointF(totalX / points.size(), totalY / points.size());
+        }
+
+        // 更新质心并重新计算
+        void updateCenterOfMass() {
+            if (points.empty()) {
+                mass = 0;
+                centerOfMass = QPointF(0, 0);
+            } else {
+                calculateCenterOfMass();
+            }
+        }
+    };
+
     QRectF calculateDynamicBoundary(const QMap<QString, VertexItem *> &nodes) {
         if (nodes.isEmpty()) {
-            // 如果没有节点，返回一个默认边界
             return {-1000, -1000, 2000, 2000};
         }
 
-        // 初始化最小和最大值
         double minX = std::numeric_limits<double>::max();
         double minY = std::numeric_limits<double>::max();
         double maxX = std::numeric_limits<double>::lowest();
         double maxY = std::numeric_limits<double>::lowest();
 
-        // 遍历所有节点，找出最小和最大位置
         for (auto node : nodes) {
             if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
                 QPointF pos = vertex->pos();
@@ -33,15 +163,11 @@ namespace {
             }
         }
 
-        // 给边界添加一定的缓冲区以避免节点靠近边界时超出
-        double padding = 200.0; // 缓冲区大小
-        return {
-            minX - padding, minY - padding,
-            (maxX - minX) + 2 * padding,
-            (maxY - minY) + 2 * padding
-        };
+        double padding = 200.0;
+        return {minX - padding, minY - padding, (maxX - minX) + 2 * padding, (maxY - minY) + 2 * padding};
     }
-}
+
+} // 匿名命名空间
 
 GraphWidget::GraphWidget(QWidget *parent)
     : QGraphicsView(parent) {
@@ -64,7 +190,7 @@ GraphWidget::GraphWidget(QWidget *parent)
         for (auto node : nodes) {
             if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
                 double damping = 0.85;
-                double timeStep = 0.05;
+                double timeStep = 0.5;
                 QPointF force = vertex->getForce();
                 QPointF velocity = vertex->getVelocity();
 
@@ -174,64 +300,62 @@ QMap<QString, VertexItem *> GraphWidget::getVertices() {
     return vertices;
 }
 
-std::vector<std::pair<VertexItem *, VertexItem *>> GraphWidget::getEdges() {
+std::vector<std::pair<VertexItem *, VertexItem *>> GraphWidget::getEdges() const {
     return edges;
 }
 
+QRectF GraphWidget::getSceneBounds() const {
+    return scene->sceneRect(); // 获取场景的矩形边界
+}
+
+// 在GraphWidget中的calculateForces方法中应用四叉树
 void calculateForces(GraphWidget *graphWidget) {
-    auto nodes = graphWidget->getVertices();
+    auto nodesMap = graphWidget->getVertices();
     auto edges = graphWidget->getEdges();
 
-    // 重置所有节点的力为零
-    for (auto &node : nodes) {
-        if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
-            vertex->setForce(QPointF(0, 0)); // 初始化力为零
-        }
+    // 如果没有节点，直接返回
+    if (nodesMap.isEmpty()) {
+        return;
     }
 
-    // 获取所有节点指针到一个列表，方便并行处理
+    // 计算动态边界
+    QRectF boundary = calculateDynamicBoundary(nodesMap);
+
+    // 构建四叉树
+    QuadTree qt(boundary, 1); // 容量设置为1，每个叶节点只包含一个顶点
     std::vector<VertexWithInfo *> vertexList;
-    for (auto &node : nodes) {
-        if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(node)) {
+    for (auto &key : nodesMap.keys()) {
+        if (VertexWithInfo *vertex = dynamic_cast<VertexWithInfo *>(nodesMap[key])) {
+            qt.insert(vertex);
             vertexList.push_back(vertex);
         }
     }
 
-    // 定义线程数量（根据硬件调整）
+    // 重置所有节点的力为零
+    for (auto &vertex : vertexList) {
+        vertex->setForce(QPointF(0, 0));
+    }
+
+    // 并行计算斥力
     unsigned int numThreads = std::thread::hardware_concurrency();
     if (numThreads == 0) numThreads = 4; // 默认线程数
 
-    // 分割任务
-    std::vector<std::thread> threads;
     size_t totalVertices = vertexList.size();
-    size_t chunkSize = (totalVertices + numThreads - 1) / numThreads; // 向上取整
+    size_t chunkSize = (totalVertices + numThreads - 1) / numThreads;
 
-    // 创建一个临时数组来存储每个线程的计算结果
-    std::vector<QPointF> forces(totalVertices, QPointF(0, 0));
-
+    std::vector<std::thread> threads;
     for (unsigned int i = 0; i < numThreads; ++i) {
         size_t startIdx = i * chunkSize;
         size_t endIdx = std::min(startIdx + chunkSize, totalVertices);
 
         if (startIdx >= endIdx)
-            break; // 任务分配完毕
+            break;
 
-        threads.emplace_back([startIdx, endIdx, &vertexList, &nodes, &forces]() {
+        threads.emplace_back([&qt, &vertexList, startIdx, endIdx]() {
             for (size_t j = startIdx; j < endIdx; ++j) {
-                VertexWithInfo *vi = vertexList[j];
-                QPointF totalForce(0, 0);
-                for (auto &vj_node : nodes) {
-                    if (vj_node == vi) continue;
-                    if (VertexWithInfo *vj = dynamic_cast<VertexWithInfo *>(vj_node)) {
-                        QPointF delta = vi->pos() - vj->pos();
-                        double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-                        double repulsiveForce = 10000.0 / (distance * distance); // 可调参数
-                        QPointF direction = delta / distance;
-                        QPointF force = repulsiveForce * direction;
-                        totalForce += force;
-                    }
-                }
-                forces[j] = totalForce;
+                VertexWithInfo *vertex = vertexList[j];
+                QPointF force = qt.calculateForce(vertex);
+                vertex->addForce(force);
             }
         });
     }
@@ -242,26 +366,27 @@ void calculateForces(GraphWidget *graphWidget) {
             t.join();
     }
 
-    // 将计算结果应用到节点
-    for (size_t j = 0; j < vertexList.size(); ++j) {
-        vertexList[j]->setForce(forces[j]);
-    }
-
-    // 计算吸引力（保持单线程）
-    for (auto &edge : edges) {
-        VertexWithInfo *vi = dynamic_cast<VertexWithInfo *>(edge.first);
-        VertexWithInfo *vj = dynamic_cast<VertexWithInfo *>(edge.second);
+    // 计算吸引力（保持单线程或进一步优化）
+    for (auto &edgePair : edges) {
+        VertexWithInfo *vi = dynamic_cast<VertexWithInfo *>(edgePair.first);
+        VertexWithInfo *vj = dynamic_cast<VertexWithInfo *>(edgePair.second);
         if (vi && vj) {
-            // 计算两个节点之间的位移向量和欧几里得距离
             QPointF delta = vi->pos() - vj->pos();
-            // 使用欧几里得距离，避免为 0
             double distance = std::max(std::hypot(delta.x(), delta.y()), 1.0);
-            // 计算吸引力，通常吸引力与距离呈线性关系，这里设为 F = k * d
-            double attractiveForce = (distance * distance) / 1000.0; // k 可以根据图大小调整
+            double attractiveForce = (distance * distance) / 10000.0; // 可调参数
             QPointF direction = delta / distance;
-            // 更新节点的力（相连节点向彼此靠拢）
             vi->addForce(-attractiveForce * direction);
             vj->addForce(attractiveForce * direction);
         }
     }
+
+    // 更新所有节点的位置
+    QRectF sceneBounds = graphWidget->getSceneBounds();
+    for (auto &vertex : vertexList) {
+        vertex->applyForce(sceneBounds);
+    }
+
+    // 更新场景显示
+    graphWidget->scene->update();
 }
+
