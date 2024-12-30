@@ -5,11 +5,9 @@
 #include "VertexWithInfo.h"
 #include <thread>
 #include <vector>
-#include <mutex>
 #include <cmath>
 #include <algorithm>
 #include <limits>
-#include <spdlog/spdlog.h>
 
 namespace {
     QRectF calculateDynamicBoundary(const QMap<QString, VertexItem *> &nodes) {
