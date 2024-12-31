@@ -49,6 +49,12 @@
     <ClInclude Include="src\utils\Locale.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\JSONProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Movie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\GraphWidget.h">
@@ -83,5 +89,14 @@
     <ClCompile Include="src\VertexInfoPopup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\JSONProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Movie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="movie.json" />
   </ItemGroup>
 </Project>
