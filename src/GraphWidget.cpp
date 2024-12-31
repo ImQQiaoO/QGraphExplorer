@@ -31,7 +31,7 @@ namespace {
         QuadTree *SE;  // 南东
 
         // 构造函数
-        QuadTree(const QRectF& boundary, int capacity)
+        QuadTree(const QRectF &boundary, int capacity)
             : boundary(boundary), capacity(capacity), divided(false), centerOfMass(0, 0), mass(0),
             NW(nullptr), NE(nullptr), SW(nullptr), SE(nullptr) {
         }
@@ -328,12 +328,34 @@ void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QP
     ++vertex_size;
 }
 
-void GraphWidget::setBrushByName(QString name) {
-    vertices[name]->setBrush(QBrush(Qt::red));
+void GraphWidget::focus_on_vertex(const QString &name) {
+    VertexItem *curr_vertex = vertices[name];
+    if (!curr_vertex) {
+        return;
+    }
+    this->centerOn(curr_vertex->sceneBoundingRect().center());
+    QBrush original_brush = curr_vertex->getBrush();
 
-    this->centerOn(vertices[name]->sceneBoundingRect().center());
+    constexpr int total_flashes = 3;
+    int *current_flash = new int(0);
 
+    QTimer *flash_timer = new QTimer(this);
+    connect(flash_timer, &QTimer::timeout, this, [=]() mutable {
+        if (*current_flash < total_flashes * 2) { // Each flash has two states
+            if (*current_flash % 2 == 0) {
+                curr_vertex->setBrush(QBrush(Qt::red));
+            } else {
+                curr_vertex->setBrush(original_brush);
+            }
+            (*current_flash)++;
+        } else {
+            flash_timer->stop();
+            flash_timer->deleteLater();
+            delete current_flash;
+        }
+    });
 
+    flash_timer->start(500);
 }
 
 void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {

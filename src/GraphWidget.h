@@ -18,7 +18,7 @@ public:
     // 添加一个顶点到图中
     void addVertex(const QString &name, ShapeType shape, const QPointF &position);
 
-    void setBrushByName(QString name);
+    void focus_on_vertex(const QString &name);
 
     // 添加一条边到图中
     void addEdge(const QString &vertex1, const QString &vertex2);

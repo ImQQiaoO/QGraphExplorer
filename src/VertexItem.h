@@ -23,6 +23,8 @@ public:
     // 设置填充颜色
     void setBrush(const QBrush &brush);
 
+    QBrush getBrush() const;
+
     // 添加与该顶点相连的边
     void addEdge(EdgeItem *edge);
 

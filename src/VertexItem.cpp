@@ -58,6 +58,10 @@ void VertexItem::setBrush(const QBrush &newBrush) {
     update();
 }
 
+QBrush VertexItem::getBrush() const {
+    return brush;
+}
+
 //QRectF VertexItem::boundingRect() const {
 //    return QRectF(0, 0, 50, 50);  // 设置一个合适的边界框
 //}
