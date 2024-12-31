@@ -6,6 +6,7 @@
 
 
 class VertexWithInfo : public VertexItem {
+
 public:
     VertexWithInfo(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
 
@@ -23,6 +24,9 @@ public:
     void setVelocity(const QPointF &velocity);
     // 应用力来更新位置和速度
     void applyForce(const QRectF &bounds);
+
+    void setName(const QString &name) { this->name = name; }
+    QString getName() const { return name; }
 
 private:
     QString name;
