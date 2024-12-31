@@ -230,7 +230,16 @@ GraphWidget::GraphWidget(QWidget *parent)
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [&]() {
         // 每次定时器触发时，计算节点间的力并更新位置
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        // 每次定时器触发时，计算节点间的力并更新位置
         calculateForces(this);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = end - start;
+        qDebug() << "Force Calculation Time:" << elapsed.count() << "seconds";
+
         auto nodes = this->getVertices();
         // 更新节点位置（使用适当的时间步长和阻尼）
 
