@@ -8,7 +8,11 @@
 #include "JSONProcessor.h"
 #include "utils/Locale.hpp"
 
+class VertexWithInfo;
+
 class AddItems {
+
+public:
     static void addDebug(GraphWidget *graphWidget) {
         // 添加一些顶点
         // 使用梅森旋转生成随机位置，范围-200到200
@@ -39,8 +43,7 @@ class AddItems {
             QString movieName = QString::fromStdString(movie.movieName);
             // 为每个电影创建一个方块节点
             graphWidget->addVertex(movieName, ShapeType::Rectangle,
-                QPointF(distrib(gen), distrib(gen)));  // 随机位置
-
+                QPointF(distrib(gen),distrib(gen)));  // 随机位置
 
             // 为每个演员创建一个圆形节点，并且与电影节点连接
             for (const auto& actor : movie.actorsName) {

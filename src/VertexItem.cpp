@@ -8,8 +8,10 @@
 
 
 
+
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
     : QGraphicsItem(parent), vertexName(std::move(name)), shapeType(shape) {
+
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);  // Enable hover events
@@ -68,7 +70,7 @@ QRectF VertexItem::boundingRect() const {
 void VertexItem::paint(QPainter *painter, [[maybe_unused]] const QStyleOptionGraphicsItem *option,
     [[maybe_unused]] QWidget *widget) {
     painter->setPen(QPen(Qt::black, 2));
-    painter->setBrush(Qt::darkGray);
+    painter->setBrush(brush);
 
     switch (shapeType) {
         case ShapeType::Circle:

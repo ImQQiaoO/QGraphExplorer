@@ -6,6 +6,7 @@
 
 
 class VertexWithInfo : public VertexItem {
+
 public:
     VertexWithInfo(QString name, ShapeType shape, QGraphicsItem *parent = nullptr);
 
@@ -25,6 +26,9 @@ public:
     void setVelocity(const QPointF &v) {
         velocity = v;
     }
+
+    void setName(const QString &name) { this->name = name; }
+    QString getName() const { return name; }
 
 private:
     QString name;

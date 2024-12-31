@@ -1,7 +1,10 @@
 ﻿#include "MainWindow.h"
 #include "AddItems.h"
 #include <QLineEdit>
+#include <QMessageBox>
+
 #include "JSONProcessor.h"
+#include "GraphWidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -26,8 +29,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+
 // 槽函数，捕获回车键事件
 void MainWindow::on_returnPressed() {
+
+
     // 获取用户输入的文本
     QString text = lineEdit->text();
 
@@ -35,6 +41,11 @@ void MainWindow::on_returnPressed() {
     spdlog::info( utils::utf8_to_ansi(text.toStdString()));
 
     // 处理用户输入的文本，可以进行其他操作，如提交数据等
+    QMap<QString, VertexItem *> vertices = graphWidget->getVertices();
+    if(vertices.contains(text)) graphWidget->setBrushByName(text);
+    else QMessageBox::critical(nullptr, "warning","未找到相关节点");
+
+
 }
 
 

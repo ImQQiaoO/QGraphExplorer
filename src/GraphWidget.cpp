@@ -11,6 +11,8 @@
 #include <limits>
 #include <spdlog/spdlog.h>
 
+#include "AddItems.h"
+
 namespace {
     QRectF calculateDynamicBoundary(const QMap<QString, VertexItem *> &nodes) {
         if (nodes.isEmpty()) {
@@ -49,6 +51,7 @@ GraphWidget::GraphWidget(QWidget *parent)
     : QGraphicsView(parent) {
     // 初始化场景
     scene = new QGraphicsScene(this);
+    view = new QGraphicsView(scene);
     setScene(scene);
     setRenderHint(QPainter::Antialiasing);  // 开启抗锯齿
     // 设置场景的边界
@@ -100,6 +103,7 @@ void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QP
     // 创建自定义顶点项，传入指定的形状
     VertexItem *vertex = new VertexWithInfo(name, shape);
 
+
     // 根据不同形状调整大小或其他设置
     switch (shape) {
         case ShapeType::Circle:
@@ -122,6 +126,16 @@ void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QP
 
     // 将顶点存储起来
     vertices[name] = vertex;
+
+}
+
+void GraphWidget::setBrushByName(QString name) {
+    vertices[name]->setBrush(QBrush(Qt::red));
+    //设置中心 不知道为啥没用
+    /*
+    view->centerOn(vertices[name]->sceneBoundingRect().center());
+    */
+
 }
 
 void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {

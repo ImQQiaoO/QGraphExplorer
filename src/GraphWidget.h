@@ -12,10 +12,13 @@ class GraphWidget : public QGraphicsView {
     Q_OBJECT
 
 public:
+
     explicit GraphWidget(QWidget *parent = nullptr);
 
     // 添加一个顶点到图中
     void addVertex(const QString &name, ShapeType shape, const QPointF &position);
+
+    void setBrushByName(QString name);
 
     // 添加一条边到图中
     void addEdge(const QString &vertex1, const QString &vertex2);
@@ -24,7 +27,7 @@ public:
     QMap<QString, VertexItem *> getVertices();
     std::vector<std::pair<VertexItem *, VertexItem * >> getEdges();
     QGraphicsScene *scene;
-
+    QGraphicsView *view;
 
 protected:
     // 捕获鼠标滚轮事件，用来实现缩放
@@ -35,6 +38,7 @@ protected:
 
 private:
     QMap<QString, VertexItem *> vertices;  // 用来存储顶点
+
     std::vector<std::pair<VertexItem *, VertexItem * >> edges;    // 用来存储边
 
     // 缩放因子
