@@ -1,7 +1,9 @@
 ﻿#include "JSONProcessor.h"
 #include <fstream>
-#include <iostream>
+#include <sstream>
 #include <QMessageBox>
+#include <spdlog/spdlog.h>
+
 #include "Movie.h"
 
 std::vector<Movie> JSONProcessor::movies;
@@ -28,6 +30,13 @@ void JSONProcessor::json_loader() {
     for (size_t i = 0; i < 70; ++i) {
         Movie movie = j[i].get<Movie>();
         movies.push_back(movie);
+    }
+
+    // For debugging
+    for (const auto &movie : movies) {
+        std::stringstream ss;
+        ss << movie;
+        spdlog::info("\n" + ss.str());
     }
 
 }

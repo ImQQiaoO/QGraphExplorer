@@ -23,6 +23,8 @@ public:
     // 添加一条边到图中
     void addEdge(const QString &vertex1, const QString &vertex2);
 
+    int get_vertex_size() const;
+
     QGraphicsScene *scene;
     // 获取顶点
     QMap<QString, VertexItem *> getVertices() const;
@@ -44,6 +46,8 @@ private:
 
     // 缩放因子
     qreal scaleFactor = 1.15;
+
+    int vertex_size = 0;
 
     // 返回两个顶点的中心点
     QPointF getVertexCenter(const QString &vertexName);

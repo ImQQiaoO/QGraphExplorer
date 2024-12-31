@@ -16,7 +16,7 @@ public:
     ~MainWindow() override;
 
 private slots:
-    void on_returnPressed();  // 槽函数，用于捕获回车键事件
+    void on_returnPressed() const;  // 槽函数，用于捕获回车键事件
 
 private:
     GraphWidget *graphWidget;

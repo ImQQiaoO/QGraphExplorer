@@ -292,12 +292,13 @@ GraphWidget::GraphWidget(QWidget *parent)
     setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     // 设置为橡皮筋拖拽模式，支持鼠标框选多个顶点
     setDragMode(QGraphicsView::RubberBandDrag);
+
+    vertex_size = 0;       // DEBUG: 用于调试
 }
 
 void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QPointF &position) {
     // 创建自定义顶点项，传入指定的形状
     VertexItem *vertex = new VertexWithInfo(name, shape);
-
 
     // 根据不同形状调整大小或其他设置
     switch (shape) {
@@ -321,7 +322,7 @@ void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QP
 
     // 将顶点存储起来
     vertices[name] = vertex;
-
+    ++vertex_size;
 }
 
 void GraphWidget::setBrushByName(QString name) {
@@ -348,6 +349,10 @@ void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {
     // 将边添加到两个顶点中，确保在顶点移动时更新边
     v1->addEdge(edge);
     v2->addEdge(edge);
+}
+
+int GraphWidget::get_vertex_size() const {
+    return vertex_size;
 }
 
 QPointF GraphWidget::getVertexCenter(const QString &vertexName) {

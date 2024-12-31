@@ -4,8 +4,8 @@
 #include <QMessageBox>
 
 #include "JSONProcessor.h"
+#include "Search.h"
 #include "GraphWidget.h"
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
@@ -31,10 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 // 槽函数，捕获回车键事件
-void MainWindow::on_returnPressed() {
-
-
+void MainWindow::on_returnPressed() const {
     // 获取用户输入的文本
+    Search::target_string = lineEdit->text();
     QString text = lineEdit->text();
 
     // 输出文本到控制台（你可以根据需要做其他处理）

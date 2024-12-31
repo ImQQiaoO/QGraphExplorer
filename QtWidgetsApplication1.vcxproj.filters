@@ -55,6 +55,9 @@
     <ClInclude Include="src\Movie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Serch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\GraphWidget.h">
@@ -93,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Movie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Search.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
