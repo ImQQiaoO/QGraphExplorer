@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <memory>
+#include "Search.h"
 #include "GraphWidget.h"
 
 class QLineEdit;
@@ -15,14 +16,11 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
-private slots:
-    void on_returnPressed() const;  // 槽函数，用于捕获回车键事件
-
 private:
     GraphWidget *graphWidget;
     std::unique_ptr<AddItems> add_items_;
+    std::unique_ptr<Search> search_;
 
-    QLineEdit *lineEdit;  // 新添加的 QLineEdit 控件
 };
 
 #endif // MAINWINDOW_H

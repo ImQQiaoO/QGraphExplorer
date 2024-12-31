@@ -373,16 +373,16 @@ void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void GraphWidget::wheelEvent(QWheelEvent *event) {
     if (event->modifiers() & Qt::ControlModifier) {
-        double scaleFactor = 1.15;
+        double scale_factor = 1.15;
         if (event->angleDelta().y() < 0)
-            scaleFactor = 1.0 / scaleFactor;
-        double newScale = transform().m11() * scaleFactor;
-        const double minScale = 0.1;
-        const double maxScale = 10.0;
+            scale_factor = 1.0 / scale_factor;
+        double newScale = transform().m11() * scale_factor;
+        double minScale = 0.1;
+        double maxScale = 10.0;
         if (newScale < minScale || newScale > maxScale) {
             return;
         }
-        scale(scaleFactor, scaleFactor);
+        scale(scale_factor, scale_factor);
         event->accept();
     } else {
         QGraphicsView::wheelEvent(event);
