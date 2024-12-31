@@ -5,6 +5,7 @@
 #include "JSONProcessor.h"
 #include "Search.h"
 #include "GraphWidget.h"
+#include "utils/Locale.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {

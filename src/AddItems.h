@@ -6,7 +6,6 @@
 #include <spdlog/spdlog.h>
 
 #include "JSONProcessor.h"
-#include "utils/Locale.hpp"
 
 class VertexWithInfo;
 
@@ -21,7 +20,7 @@ public:
         std::mt19937 gen(rd());  // mt19937 是一个随机数生成器
 
         // 定义一个均匀分布，范围从 -200.0 到 200.0
-        std::uniform_real_distribution<double> distrib(-200.0, 200.0);
+        std::uniform_real_distribution<double> distrib(-1000.0, 1000.0);
 
         /*graphWidget->addVertex("你好", ShapeType::Circle,
             QPointF(distrib(gen), distrib(gen)));
@@ -37,13 +36,13 @@ public:
         //检查演员名字是否重复
         QSet<QString> addedActors;
 
-
+        std::uniform_real_distribution<double> distrib_actor(-50.0, 50.0);
         for (const auto &movie : JSONProcessor::movies) {
             //将名字转换成QString
             QString movieName = QString::fromStdString(movie.movieName);
             // 为每个电影创建一个方块节点
             graphWidget->addVertex(movieName, ShapeType::Rectangle,
-                QPointF(distrib(gen),distrib(gen)));  // 随机位置
+                QPointF(distrib(gen), distrib(gen)));  // 随机位置
 
             // 为每个演员创建一个圆形节点，并且与电影节点连接
             for (const auto &actor : movie.actorsName) {
@@ -53,8 +52,10 @@ public:
                 // 检查演员是否已经添加过
                 if (!addedActors.contains(actorName)) {
                     // 如果没有添加过，则创建节点
+                    QPointF curr_movie_pos = graphWidget->getVertices()[movieName]->pos();
                     graphWidget->addVertex(actorName, ShapeType::Circle,
-                        QPointF(distrib(gen), distrib(gen)));  // 随机位置
+                        QPointF(curr_movie_pos.x() + distrib_actor(gen), 
+                            curr_movie_pos.y() + distrib_actor(gen)));  // 随机位置
                     // 将演员名字添加到集合中
                     addedActors.insert(actorName);
                 }

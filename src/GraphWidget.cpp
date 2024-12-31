@@ -31,7 +31,7 @@ namespace {
         QuadTree *SE;  // 南东
 
         // 构造函数
-        QuadTree(QRectF boundary, int capacity)
+        QuadTree(const QRectF& boundary, int capacity)
             : boundary(boundary), capacity(capacity), divided(false), centerOfMass(0, 0), mass(0),
             NW(nullptr), NE(nullptr), SW(nullptr), SE(nullptr) {
         }
@@ -151,7 +151,7 @@ namespace {
                         totalX += point->pos().x();
                         totalY += point->pos().y();
                     }
-                    mass = points.size();
+                    mass = static_cast<double>(points.size());
                     centerOfMass = QPointF(totalX / mass, totalY / mass);
                 }
             } else {
@@ -245,7 +245,7 @@ GraphWidget::GraphWidget(QWidget *parent)
         // 更新节点位置（使用适当的时间步长和阻尼）
 
         double damping = 0.85; // 阻尼
-        double timeStep = 0.6; // 时间步长
+        double timeStep = 0.75; // 时间步长
         double maxSpeed = 75.0; // 最大移动速度
         double minMoveThreshold = 0.1; // 最小移动阈值
 
@@ -473,9 +473,9 @@ void calculateForces(GraphWidget *graphWidget) {
 
     // 添加中心引力
     QPointF sceneCenter = graphWidget->scene->sceneRect().center();
-    double centerStrength = 0.05; // 可调参数
 
     for (auto &vertex : vertexList) {
+        double centerStrength = 0.05;
         QPointF delta = sceneCenter - vertex->pos();
         double distance = std::max(std::hypot(delta.x(), delta.y()), 0.01);
         QPointF centerForce = centerStrength * delta / distance;

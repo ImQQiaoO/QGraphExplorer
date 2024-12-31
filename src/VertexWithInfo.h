@@ -23,13 +23,9 @@ public:
     QPointF getVelocity() const;
     void setVelocity(const QPointF &velocity);
     // 应用力来更新位置和速度
-    void applyForce(const QRectF &bounds);
-
-    void setName(const QString &name) { this->name = name; }
-    QString getName() const { return name; }
+    // void applyForce(const QRectF &bounds);
 
 private:
-    QString name;
     QPointF force;
     QPointF velocity;
     mutable std::mutex mutex; // 保护force的互斥量
