@@ -41,7 +41,6 @@ protected:
 
 private:
     QMap<QString, VertexItem *> vertices;  // 用来存储顶点
-
     std::vector<std::pair<VertexItem *, VertexItem * >> edges;    // 用来存储边
 
     // 缩放因子

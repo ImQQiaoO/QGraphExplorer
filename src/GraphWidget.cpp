@@ -300,6 +300,7 @@ void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QP
     // 创建自定义顶点项，传入指定的形状
     VertexItem *vertex = new VertexWithInfo(name, shape);
 
+
     // 根据不同形状调整大小或其他设置
     switch (shape) {
         case ShapeType::Circle:

@@ -2,7 +2,6 @@
 #include "AddItems.h"
 #include <QLineEdit>
 #include <QMessageBox>
-
 #include "JSONProcessor.h"
 #include "Search.h"
 #include "GraphWidget.h"
