@@ -55,15 +55,15 @@
     <ClInclude Include="src\Movie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Serch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="src\GraphWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="src\MainWindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\Search.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

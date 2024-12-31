@@ -110,7 +110,7 @@
     <ClInclude Include="src\EdgeItem.h" />
     <ClInclude Include="src\JSONProcessor.h" />
     <ClInclude Include="src\Movie.h" />
-    <ClInclude Include="src\Search.h" />
+    <QtMoc Include="src\Search.h" />
     <ClInclude Include="src\utils\Locale.hpp" />
     <ClInclude Include="src\VertexInfoPopup.h" />
     <ClInclude Include="src\VertexItem.h" />
