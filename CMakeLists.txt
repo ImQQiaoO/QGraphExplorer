@@ -47,6 +47,7 @@ add_executable(QGraphExplorer
         src/utils/Locale.hpp
         src/Movie.cpp
         src/JSONProcessor.cpp
+        src/Search.cpp
 )
 
 target_compile_definitions(QGraphExplorer PRIVATE BUILD_WITH_CMAKE)
