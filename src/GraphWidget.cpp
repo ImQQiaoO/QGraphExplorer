@@ -131,11 +131,9 @@ void GraphWidget::addVertex(const QString &name, const ShapeType shape, const QP
 
 void GraphWidget::setBrushByName(QString name) {
     vertices[name]->setBrush(QBrush(Qt::red));
-    //设置中心 不知道为啥没用
-    /*
-    view->centerOn(vertices[name]->sceneBoundingRect().center());
-    */
 
+    //设置中心 不知道为啥没用
+    this->centerOn(vertices[name]->sceneBoundingRect().center());
 }
 
 void GraphWidget::addEdge(const QString &vertex1, const QString &vertex2) {
