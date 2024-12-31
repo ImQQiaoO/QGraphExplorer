@@ -20,6 +20,6 @@ void Search::return_pressed(GraphWidget *graphWidget) const {
     spdlog::info(utils::utf8_to_ansi(text.toStdString()));
 
     QMap<QString, VertexItem *> vertices = graphWidget->getVertices();
-    if (vertices.contains(text)) graphWidget->setBrushByName(text);
+    if (vertices.contains(text)) graphWidget->focus_on_vertex(text);
     else QMessageBox::critical(nullptr, "warning", "未找到相关节点");
 }
