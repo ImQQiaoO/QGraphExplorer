@@ -236,7 +236,7 @@ GraphWidget::GraphWidget(QWidget *parent)
 
         // 每次定时器触发时，计算节点间的力并更新位置
         calculateForces(this);
-
+        // DEBUG
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = end - start;
         qDebug() << "Force Calculation Time:" << elapsed.count() << "seconds";
@@ -292,6 +292,8 @@ GraphWidget::GraphWidget(QWidget *parent)
     setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     // 设置为橡皮筋拖拽模式，支持鼠标框选多个顶点
     setDragMode(QGraphicsView::RubberBandDrag);
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    setResizeAnchor(QGraphicsView::AnchorUnderMouse);
 
     vertex_size = 0;       // DEBUG: 用于调试
 }
@@ -371,18 +373,19 @@ void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect) {
 }
 
 void GraphWidget::wheelEvent(QWheelEvent *event) {
-    // 检查 Ctrl 键是否按下
     if (event->modifiers() & Qt::ControlModifier) {
-        // 检查滚轮滚动的方向
-        if (event->angleDelta().y() > 0) {
-            // 放大
-            scale(1.15, 1.15);
-        } else {
-            // 缩小
-            scale(1.0 / 1.15, 1.0 / 1.15);
+        double scaleFactor = 1.15;
+        if (event->angleDelta().y() < 0)
+            scaleFactor = 1.0 / scaleFactor;
+        double newScale = transform().m11() * scaleFactor;
+        const double minScale = 0.1;
+        const double maxScale = 10.0;
+        if (newScale < minScale || newScale > maxScale) {
+            return;
         }
+        scale(scaleFactor, scaleFactor);
+        event->accept();
     } else {
-        // 如果没有按住 Ctrl 键，则调用父类的事件处理程序
         QGraphicsView::wheelEvent(event);
     }
 }
