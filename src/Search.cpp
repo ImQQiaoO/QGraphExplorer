@@ -1,7 +1,6 @@
 ﻿#include "Search.h"
 #include <QToolButton>
 #include <QMenu>
-#include "MainWindow.h"
 #include "GraphWidget.h"
 #include <QMessageBox>
 #include <spdlog/spdlog.h>
@@ -40,7 +39,7 @@ Search::Search(GraphWidget *graphWidget) : QObject(graphWidget), currentCategory
     dropDownButton->setGeometry(230, 20, 80, 30);
 
     connect(menu, &QMenu::triggered, this, &Search::dropdown_option_selected);
-    connect(dropDownButton, &QToolButton::clicked, this, &Search::button_pressed);
+    connect(dropDownButton, &QToolButton::clicked, this, [this, graphWidget]() { return_pressed(graphWidget); });
 }
 
 void Search::dropdown_option_selected(const QAction *action) {
@@ -55,12 +54,33 @@ void Search::dropdown_option_selected(const QAction *action) {
     }
 }
 
-void Search::button_pressed(bool checked) {
+void Search::button_pressed(GraphWidget *graphWidget) {
     currentCategory = dropDownButton->text(); // 更新当前类别
     dropDownButton->setText(currentCategory); // 更新按钮显示文本
+
+    // DEBUG
     std::stringstream ss;
     ss << " 按下时的类别:";
     spdlog::info("{}", utils::utf8_to_ansi(ss.str()) + utils::utf8_to_ansi(currentCategory.toStdString()));
+
+    if (currentCategory == "聚焦") {
+        // 获取用户输入的文本
+        Search::target_string = lineEdit->text();
+        QString text = lineEdit->text();
+
+        spdlog::info(utils::utf8_to_ansi(text.toStdString()));
+
+        QMap<QString, VertexItem *> vertices = graphWidget->getVertices();
+        if (vertices.contains(text)) {
+            graphWidget->focus_on_vertex(text);
+        } else {
+            QMessageBox::critical(nullptr, "警告", "未找到相关节点");
+        }
+
+        std::stringstream ss1;
+        ss1 << " 按下时的类别:";
+        spdlog::info("{}", utils::utf8_to_ansi(ss1.str()) + utils::utf8_to_ansi(currentCategory.toStdString()));
+    }
 }
 
 void Search::return_pressed(GraphWidget *graphWidget) const {

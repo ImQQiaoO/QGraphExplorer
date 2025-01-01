@@ -452,7 +452,7 @@ void calculateForces(GraphWidget *graphWidget) {
     }
 
     // 并行计算斥力
-    unsigned int numThreads = std::thread::hardware_concurrency();
+    unsigned int numThreads = /*std::thread::hardware_concurrency()*/4;
     if (numThreads == 0) numThreads = 4; // 默认线程数
 
     size_t totalVertices = vertexList.size();

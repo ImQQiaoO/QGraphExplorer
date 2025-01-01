@@ -23,7 +23,7 @@ private:
 private slots:
     void return_pressed(GraphWidget *graphWidget) const;
     void dropdown_option_selected(const QAction *action);
-    void button_pressed(bool checked);
+    void button_pressed(GraphWidget *graphWidget);
 };
 
 
