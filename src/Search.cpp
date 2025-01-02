@@ -32,13 +32,26 @@ namespace {
             }
         }
     }
+
+    void dfs(VertexItem *vertex, QSet<VertexItem *> &visited, QList<VertexItem *> &component) {
+        visited.insert(vertex);  // 标记当前顶点为已访问
+        component.append(vertex);  // 将顶点加入当前连通分量
+
+        // 遍历所有相邻节点
+        for (EdgeItem *edge : vertex->get_edges()) {
+            VertexItem *neighbor = edge->get_source() == vertex ? edge->get_dest() : edge->get_source();
+            if (!visited.contains(neighbor)) {
+                dfs(neighbor, visited, component);  // 递归访问相邻节点
+            }
+        }
+    }
 }
 
 Search::Search(GraphWidget *graphWidget) : QObject(graphWidget), currentCategory("聚焦") {
     categoryList = {
         "聚焦",
         "相关电影",
-        "测试2"
+        "连通分量"
     };
 
     // 创建 QLineEdit
@@ -125,6 +138,19 @@ void Search::button_pressed(GraphWidget *graphWidget) {
 
         std::thread t(Search::search_relevant_movies, graphWidget);
         t.detach();
+    } else if (currentCategory == "连通分量") {
+        QMap<QString, VertexItem *> vertices = graphWidget->getVertices();
+        if (!vertices.contains(target_string)) {
+            QMessageBox::critical(nullptr, "警告", "未找到相关节点");
+            return;
+        }
+        currentCategory = "还原";
+        dropDownButton->setText("还原");
+
+        graphWidget->focus_on_vertex(target_string);
+
+        std::thread t(Search::find_connected_components, graphWidget);
+        t.detach();
     } else if (currentCategory == "还原") {
         for (const auto &v : graphWidget->getVertices()) {
             VertexItem::show_vertex(v, graphWidget);
@@ -183,5 +209,38 @@ void Search::search_relevant_movies(GraphWidget *graphWidget) {
     }
     for (VertexItem *v : to_show) {
         show_items_groups(v, graphWidget);
+    }
+}
+
+void Search::find_connected_components(GraphWidget *graphWidget) {
+
+    VertexItem *vertex = nullptr;
+    for (const auto &movie : JSONProcessor::movies) {
+        if (QString::fromStdString(movie.movieName) == Search::target_string) {
+            vertex = graphWidget->getVertices()[QString::fromStdString(movie.movieName)];
+            break;
+        }
+    }
+    for (const auto &v : graphWidget->getVertices()) {
+        VertexItem::hide_vertex(v, graphWidget);
+    }
+    for (const auto &movie : JSONProcessor::movies) {
+        for (const auto &actor : movie.actorsName) {
+            if (QString::fromStdString(actor) == Search::target_string) {
+                vertex = graphWidget->getVertices()[QString::fromStdString(movie.movieName)];
+                break;
+            }
+        }
+    }
+
+    QSet<VertexItem *> visited;
+    QList<VertexItem *> component;  // 当前连通分量
+
+    // 从当前节点开始执行深度优先搜索
+    dfs(vertex, visited, component);
+
+    // 显示当前连通分量中的所有节点
+    for (VertexItem *v : component) {
+        VertexItem::show_vertex(v, graphWidget);
     }
 }

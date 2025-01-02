@@ -21,6 +21,7 @@ private:
     QString befClk;
     std::vector<QString> categoryList;
     static void search_relevant_movies(GraphWidget *graphWidget);
+    static void find_connected_components(GraphWidget *graphWidget);
 
 private slots:
     void enter_pressed(GraphWidget *graphWidget) const;
