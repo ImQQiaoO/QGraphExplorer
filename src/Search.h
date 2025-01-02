@@ -18,12 +18,13 @@ private:
     QLineEdit *lineEdit;
     QToolButton *dropDownButton;
     QString currentCategory;
+    QString befClk;
     std::vector<QString> categoryList;
+    static void search_relevant_movies(GraphWidget *graphWidget);
 
 private slots:
-    void return_pressed(GraphWidget *graphWidget) const;
+    void enter_pressed(GraphWidget *graphWidget) const;
     void dropdown_option_selected(const QAction *action);
     void button_pressed(GraphWidget *graphWidget);
 };
-
 

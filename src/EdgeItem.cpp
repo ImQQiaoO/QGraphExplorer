@@ -64,3 +64,11 @@ void EdgeItem::updatePosition() {
     // 更新线条的起点和终点为交点
     setLine(QLineF(sourceIntersection, destIntersection));
 }
+
+VertexItem *EdgeItem::get_source() const {
+    return source;
+}
+
+VertexItem *EdgeItem::get_dest() const {
+    return dest;
+}

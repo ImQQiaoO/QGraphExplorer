@@ -12,6 +12,8 @@ public:
     static QPointF getIntersectionPoint(const QPainterPath &shape, const QLineF &line, bool isSource);
     // 更新边的位置
     void updatePosition();
+    VertexItem *get_source() const;
+    VertexItem *get_dest() const;
 
 private:
     VertexItem *source;

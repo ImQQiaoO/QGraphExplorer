@@ -1,6 +1,5 @@
 ﻿#include "VertexItem.h"
 #include "EdgeItem.h"
-#include <QPainter>
 #include <QGraphicsSceneHoverEvent>
 #include <spdlog/spdlog.h>
 #include "VertexInfoPopup.h"
@@ -63,6 +62,10 @@ QBrush VertexItem::getBrush() const {
     return brush;
 }
 
+QList<EdgeItem*> VertexItem::get_edges() const {
+    return edges;
+}
+
 //QRectF VertexItem::boundingRect() const {
 //    return QRectF(0, 0, 50, 50);  // 设置一个合适的边界框
 //}
@@ -106,7 +109,7 @@ bool VertexItem::get_visibility() const {
 }
 
 void VertexItem::hide_vertex(VertexItem *vertex, GraphWidget *graphWidget, bool hideEdges) {
-    graphWidget->scene->removeItem(vertex);
+    vertex->setVisible(false);
     vertex->visible = false;
     if (hideEdges) {
         auto edgesList = vertex->edges;
@@ -121,8 +124,11 @@ void VertexItem::show_vertex(VertexItem *vertex, GraphWidget *graphWidget, bool 
     vertex->visible = true;
     if (showEdges) {
         auto edgesList = vertex->edges;
+        // 只有当两边顶点都可见时，才显示与之相连的边
         for (EdgeItem *edge : edgesList) {
-            edge->setVisible(true);
+            if (edge->get_source()->get_visibility() && edge->get_dest()->get_visibility()) {
+                edge->setVisible(true);
+            }
         }
     }
 }

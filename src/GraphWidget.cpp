@@ -239,7 +239,7 @@ GraphWidget::GraphWidget(QWidget *parent)
         // DEBUG
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = end - start;
-        qDebug() << "Force Calculation Time:" << elapsed.count() << "seconds";
+        //qDebug() << "Force Calculation Time:" << elapsed.count() << "seconds";
 
         auto nodes = this->getVertices();
         // 更新节点位置（使用适当的时间步长和阻尼）

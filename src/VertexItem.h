@@ -23,6 +23,7 @@ public:
     void setBrush(const QBrush &brush);
 
     QBrush getBrush() const;
+    QList<EdgeItem *> get_edges() const;
 
     // 添加与该顶点相连的边
     void addEdge(EdgeItem *edge);
