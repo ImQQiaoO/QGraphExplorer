@@ -7,7 +7,8 @@
 #include <spdlog/spdlog.h>
 
 #include "JSONProcessor.h"
-#include "utils/Locale.hpp" 
+#include "utils/Locale.hpp"
+#include <QCompleter>
 
 QString Search::target_string;
 
@@ -45,6 +46,13 @@ Search::Search(GraphWidget *graphWidget) : QObject(graphWidget), currentCategory
     lineEdit->setPlaceholderText("请输入电影或演员名...");
     lineEdit->setGeometry(20, 20, 200, 30);
     connect(lineEdit, &QLineEdit::returnPressed, this, [this, graphWidget]() { enter_pressed(graphWidget); });
+
+    // 添加关键字补全功能
+    QStringList keywords = graphWidget->getVertices().keys();  // 从某处加载关键字
+    QCompleter *completer = new QCompleter(keywords, this);  // 创建 QCompleter
+    completer->setCaseSensitivity(Qt::CaseInsensitive);  // 不区分大小写
+    completer->setFilterMode(Qt::MatchContains);         // 允许部分匹配
+    lineEdit->setCompleter(completer);                  // 绑定到输入框
 
     // 创建下拉按钮
     dropDownButton = new QToolButton(graphWidget);
