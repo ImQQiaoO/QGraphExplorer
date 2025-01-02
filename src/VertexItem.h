@@ -1,10 +1,10 @@
 #ifndef VERTEXITEM_H
 #define VERTEXITEM_H
 
-#include <QGraphicsLineItem>
-#include <QGraphicsScene>
-
+#include "EdgeItem.h"
 #include "VertexInfoPopup.h"
+
+class GraphWidget;
 
 constexpr double VERTEX_DIAMETER = 30.0;
 
@@ -14,7 +14,6 @@ enum class ShapeType {
     Triangle
 };
 
-class EdgeItem;
 
 class VertexItem : public QGraphicsItem {
 public:
@@ -34,6 +33,10 @@ public:
     void setRect(const QRectF &newRect);  // 设置新的矩形
     void setRect(qreal x, qreal y, qreal width, qreal height);
 
+    bool get_visibility() const;
+    static void hide_vertex(VertexItem *vertex, GraphWidget *graphWidget, bool hideEdges = true);
+    static void show_vertex(VertexItem *vertex, GraphWidget *graphWidget, bool showEdges = true);
+
 protected:
     // 监听顶点的位置变化
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -52,6 +55,7 @@ protected:
 private:
     void hidePopup();
     VertexInfoPopup *popup;
+    bool visible;
 };
 
 #endif // VERTEXITEM_H

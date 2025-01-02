@@ -52,6 +52,6 @@ private:
     QPointF getVertexCenter(const QString &vertexName);
 };
 
-void calculateForces(GraphWidget *graphWidget);
+void calculateForces(const GraphWidget *graphWidget);
 
 #endif // GRAPHWIDGET_H

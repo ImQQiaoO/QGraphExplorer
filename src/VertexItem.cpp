@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 #include "VertexInfoPopup.h"
 #include "utils/Locale.hpp"
+#include "GraphWidget.h"
 
 
 VertexItem::VertexItem(QString name, ShapeType shape, QGraphicsItem *parent)
@@ -98,6 +99,32 @@ void VertexItem::setRect(const QRectF &newRect) {
 
 void VertexItem::setRect(qreal x, qreal y, qreal width, qreal height) {
     setRect(QRectF(x, y, width, height));  // 调用QRectF版本的setRect
+}
+
+bool VertexItem::get_visibility() const {
+    return visible;
+}
+
+void VertexItem::hide_vertex(VertexItem *vertex, GraphWidget *graphWidget, bool hideEdges) {
+    graphWidget->scene->removeItem(vertex);
+    vertex->visible = false;
+    if (hideEdges) {
+        auto edgesList = vertex->edges;
+        for (EdgeItem *edge : edgesList) {
+            edge->setVisible(false);
+        }
+    }
+}
+
+void VertexItem::show_vertex(VertexItem *vertex, GraphWidget *graphWidget, bool showEdges) {
+    vertex->setVisible(true);
+    vertex->visible = true;
+    if (showEdges) {
+        auto edgesList = vertex->edges;
+        for (EdgeItem *edge : edgesList) {
+            edge->setVisible(true);
+        }
+    }
 }
 
 void VertexItem::addEdge(EdgeItem *edge) {

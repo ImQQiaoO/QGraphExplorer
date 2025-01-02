@@ -4,6 +4,8 @@
 #include "GraphWidget.h"
 #include <QMessageBox>
 #include <spdlog/spdlog.h>
+
+#include "JSONProcessor.h"
 #include "utils/Locale.hpp" 
 
 QString Search::target_string;
@@ -39,7 +41,7 @@ Search::Search(GraphWidget *graphWidget) : QObject(graphWidget), currentCategory
     dropDownButton->setGeometry(230, 20, 80, 30);
 
     connect(menu, &QMenu::triggered, this, &Search::dropdown_option_selected);
-    connect(dropDownButton, &QToolButton::clicked, this, [this, graphWidget]() { return_pressed(graphWidget); });
+    connect(dropDownButton, &QToolButton::clicked, this, [this, graphWidget]() { button_pressed(graphWidget); });
 }
 
 void Search::dropdown_option_selected(const QAction *action) {
@@ -80,6 +82,10 @@ void Search::button_pressed(GraphWidget *graphWidget) {
         std::stringstream ss1;
         ss1 << " 按下时的类别:";
         spdlog::info("{}", utils::utf8_to_ansi(ss1.str()) + utils::utf8_to_ansi(currentCategory.toStdString()));
+
+        for (const auto &movie : JSONProcessor::movies) {
+            VertexItem::hide_vertex(vertices[QString::fromStdString(movie.movieName)], graphWidget);
+        }
     }
 }
 

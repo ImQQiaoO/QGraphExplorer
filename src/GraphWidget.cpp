@@ -424,7 +424,7 @@ QRectF GraphWidget::getSceneBounds() const {
 }
 
 // 在GraphWidget中的calculateForces方法中应用四叉树
-void calculateForces(GraphWidget *graphWidget) {
+void calculateForces(const GraphWidget *graphWidget) {
     auto nodesMap = graphWidget->getVertices();
     auto edges = graphWidget->getEdges();
 
